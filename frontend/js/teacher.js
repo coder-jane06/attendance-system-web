@@ -46,19 +46,21 @@ function displayClasses(classes) {
                 </div>
                 <span class="class-code">${escapeHtml(cls.class_code)}</span>
             </div>
-            <p>Schedule: ${escapeHtml(cls.schedule || 'Not scheduled')}</p>
-            <p>Room: ${escapeHtml(cls.room_number || 'Not assigned')}</p>
-            <p>Students: ${Number(cls.enrolled_students) || 0}</p>
+            <div class="class-info-item">
+                <span class="class-info-label">Schedule </span>
+                <span>${escapeHtml(cls.schedule || 'Not scheduled')}</span>
+            </div>
+            <div class="class-info-item">
+                <span class="class-info-label">Room </span>
+                <span>${escapeHtml(cls.room_number || 'Not assigned')}</span>
+            </div>
+            <div class="class-info-item">
+                <span class="class-info-label">Students </span>
+                <span>${Number(cls.enrolled_students) || 0}</span>
+            </div>
             <div class="class-actions">
-                <button class="btn btn-primary" onclick="generateQR(${Number(cls.id)})">
-                    Generate QR
-                </button>
-                <button class="btn btn-secondary" onclick="viewAttendance(${Number(cls.id)})" style="margin-left: 0.5rem; margin-right: 0.5rem;">
-                    View Attendance
-                </button>
-                <button class="btn btn-success" onclick="startClassCall(${Number(cls.id)}, '${escapeHtml(cls.class_name)}')">
-                    📞 Call Class
-                </button>
+                <button class="btn btn-primary" onclick="generateQR(${Number(cls.id)})">Generate QR</button>
+                <button class="btn btn-secondary" onclick="viewAttendance(${Number(cls.id)})">View Attendance</button>
             </div>
         </article>
     `).join('');
@@ -70,7 +72,7 @@ async function generateQR(classId) {
 
     document.getElementById('qrClassName').textContent = selectedClass ? selectedClass.class_name : 'Class';
     document.getElementById('qrSubject').textContent = selectedClass ? selectedClass.subject : 'Subject';
-    document.getElementById('qrModal').style.display = 'flex';
+    document.getElementById('qrModal').classList.add('active');
 
     await fetchAndDisplayQR();
 
@@ -128,7 +130,7 @@ function regenerateQR() {
 }
 
 function closeQRModal() {
-    document.getElementById('qrModal').style.display = 'none';
+    document.getElementById('qrModal').classList.remove('active');
 
     if (qrInterval) {
         clearInterval(qrInterval);
@@ -146,7 +148,7 @@ async function viewAttendance(classId) {
 
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('attendanceDate').value = today;
-    document.getElementById('attendanceModal').style.display = 'flex';
+    document.getElementById('attendanceModal').classList.add('active');
 
     await loadAttendance();
 }
@@ -336,7 +338,7 @@ async function saveManualAttendance() {
 }
 
 function closeAttendanceModal() {
-    document.getElementById('attendanceModal').style.display = 'none';
+    document.getElementById('attendanceModal').classList.remove('active');
 }
 
 async function exportAttendance() {
@@ -370,7 +372,7 @@ async function exportAttendance() {
 }
 
 window.onclick = function (event) {
-    if (event.target.className === 'modal') {
+    if (event.target.classList.contains('modal')) {
         closeQRModal();
         closeAttendanceModal();
     }

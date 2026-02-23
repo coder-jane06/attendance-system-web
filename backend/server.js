@@ -3,67 +3,16 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const http = require('http');
-const { Server } = require('socket.io');
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
-const io = new Server(server, {
-    cors: {
-        origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-        methods: ["GET", "POST"],
-        credentials: true
-    }
-});
-
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true
 }));
-
-// Real-time signaling logic
-io.on('connection', (socket) => {
-    console.log('User connected for real-time signaling:', socket.id);
-
-    // Register user socket mapping
-    socket.on('register', (userId) => {
-        socket.join(userId.toString());
-        console.log(`User ${userId} registered to socket ${socket.id}`);
-    });
-
-    // 1-to-1 Call Signaling
-    socket.on('callUser', (data) => {
-        console.log(`Routing call from ${data.from} to ${data.userToCall}`);
-        io.to(data.userToCall.toString()).emit('incomingCall', {
-            signal: data.signalData,
-            from: data.from,
-            name: data.callerName
-        });
-    });
-
-    socket.on('answerCall', (data) => {
-        io.to(data.to.toString()).emit('callAccepted', data.signal);
-    });
-
-    // Class Group Call Signaling
-    socket.on('startClassCall', (data) => {
-        console.log(`Broadcasting class call ${data.roomId} from ${data.teacherName}`);
-        // For a real app, emit to a specific class room. 
-        // For this demo, we broadcast to all connected sockets except the sender.
-        socket.broadcast.emit('classCallStarted', {
-            classId: data.classId,
-            teacherId: data.teacherId,
-            roomId: data.roomId,
-            teacherName: data.teacherName
-        });
-    });
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected from signaling:', socket.id);
-    });
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -143,4 +92,4 @@ server.listen(PORT, () => {
     console.log(`Attendance Management API running on port ${PORT}`);
 });
 
-module.exports = { app, server, io };
+module.exports = { app, server };

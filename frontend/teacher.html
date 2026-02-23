@@ -6,40 +6,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard | Attendance Manager</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/video-call.css">
+    <style>
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--card-backdrop);
+            -webkit-backdrop-filter: var(--card-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--glass-shadow);
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .class-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45), inset 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 1rem;
+        }
+
+        .class-header h4 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+        }
+
+        .class-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .class-code {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(59, 130, 246, 0.15);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .class-info-item {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0.6rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .class-info-label {
+            color: var(--text-muted);
+        }
+
+        .class-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .class-actions button {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-small:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-small.btn-active {
+            filter: brightness(1.2);
+        }
+
+        .btn-small[onclick*="'present'"].btn-active {
+            background: var(--success-bg);
+            color: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 10px var(--success-glow);
+        }
+
+        .btn-small[onclick*="'absent'"].btn-active {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border-color: var(--danger);
+            box-shadow: 0 0 10px var(--danger-glow);
+        }
+
+        .pending-indicator {
+            color: var(--warning);
+            font-weight: bold;
+            font-size: 1.2rem;
+            line-height: 1;
+            margin-left: 0.5rem;
+        }
+    </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="nav-content">
-            <div class="nav-left">
-                <span class="logo">AM</span>
-                <h2>Teacher Dashboard</h2>
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <span class="brand-icon">👨‍🏫</span>
+                <span>Teacher Portal</span>
             </div>
-            <div class="nav-right">
+            <div class="navbar-menu">
                 <a href="courses.html" class="btn btn-secondary" style="margin-right: 15px;">📚 Manage Courses</a>
-                <span id="teacherName" class="user-name"></span>
+                <span id="teacherName" class="user-name" style="margin-right: 20px;"></span>
                 <button onclick="logout()" class="btn btn-secondary">Logout</button>
             </div>
         </div>
     </nav>
 
-    <div class="container dashboard">
-        <section class="classes-section">
-            <h3>Your Classes</h3>
-            <div id="classesList" class="classes-grid">
+    <div class="dashboard-container">
+        <div style="margin-bottom: 3rem;">
+            <h1>Teacher Dashboard</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 0.5rem;">Manage your classes and take
+                attendance</p>
+        </div>
+
+        <section>
+            <div id="classesList" class="courses-grid">
                 <div class="loading">Loading classes...</div>
             </div>
         </section>
 
-        <div id="qrModal" class="modal" style="display:none;">
+        <!-- QR Modal -->
+        <div id="qrModal" class="modal">
             <div class="modal-content qr-modal">
-                <button class="close-btn" onclick="closeQRModal()">&times;</button>
-                <h2>Generate QR Code</h2>
-                <p class="modal-subtitle">Students need to scan within <span id="countdown">5</span> seconds</p>
+                <button class="modal-close" onclick="closeQRModal()">✕</button>
+                <div style="margin-bottom: 1.5rem;">
+                    <h2 style="margin: 0;">Generate QR Code</h2>
+                    <p style="color: var(--text-muted); margin-top: 0.5rem;">Students need to scan within <span
+                            id="countdown" style="color: var(--primary); font-weight: bold;">5</span> seconds</p>
+                </div>
 
                 <div class="qr-display">
-                    <img id="qrImage" src="" alt="QR Code">
+                    <img id="qrImage" src="" alt="QR Code"
+                        style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px; display: block;">
                     <div class="qr-timer">
                         <div class="timer-bar">
                             <div id="timerProgress" class="timer-progress"></div>
@@ -47,107 +221,68 @@
                     </div>
                 </div>
 
-                <div class="qr-info">
-                    <p><strong>Class:</strong> <span id="qrClassName"></span></p>
-                    <p><strong>Subject:</strong> <span id="qrSubject"></span></p>
-                    <p class="muted-text">Students can scan this QR using mobile camera.</p>
+                <div
+                    style="text-align: left; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--glass-border);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-muted);">Class</span>
+                        <strong id="qrClassName" style="color: var(--text-primary);"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-muted);">Subject</span>
+                        <strong id="qrSubject" style="color: var(--text-primary);"></strong>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 1rem;">
+                        Students can scan this QR using their dashboard or mobile camera.</p>
                 </div>
 
-                <button onclick="regenerateQR()" class="btn btn-primary">Regenerate QR</button>
+                <button onclick="regenerateQR()" class="btn btn-primary" style="width: 100%;">Regenerate QR</button>
             </div>
         </div>
 
-        <div id="attendanceModal" class="modal" style="display:none;">
-            <div class="modal-content attendance-modal">
-                <button class="close-btn" onclick="closeAttendanceModal()">&times;</button>
-                <h2>Attendance Record</h2>
-
-                <div class="attendance-controls">
-                    <input type="date" id="attendanceDate" class="date-input">
-                    <button onclick="loadAttendance()" class="btn btn-secondary">Load</button>
-                    <button onclick="toggleEditMode()" id="editModeBtn" class="btn btn-warning" style="display:none;">
-                        ✏️ Edit Attendance
-                    </button>
-                    <button onclick="saveManualAttendance()" id="saveModeBtn" class="btn btn-success"
-                        style="display:none;">
-                        💾 Save Changes
-                    </button>
-                    <button onclick="cancelEditMode()" id="cancelModeBtn" class="btn btn-secondary"
-                        style="display:none;">
-                        ✕ Cancel
-                    </button>
-                    <button onclick="exportAttendance()" class="btn btn-success">Export Excel</button>
+        <!-- Attendance Modal -->
+        <div id="attendanceModal" class="modal">
+            <div class="modal-content" style="max-width: 900px;">
+                <button class="modal-close" onclick="closeAttendanceModal()">✕</button>
+                <div style="margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                    <h2 style="margin: 0;">Attendance Record</h2>
                 </div>
 
-                <div id="attendanceStats" class="attendance-stats"></div>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="date" id="attendanceDate" class="form-control"
+                            style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: 8px;">
+                        <button onclick="loadAttendance()" class="btn btn-secondary"
+                            style="padding: 0.5rem 1rem;">Load</button>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="toggleEditMode()" id="editModeBtn" class="btn btn-warning"
+                            style="display:none; padding: 0.5rem 1rem;">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="saveManualAttendance()" id="saveModeBtn" class="btn btn-success"
+                            style="display:none; padding: 0.5rem 1rem;">
+                            💾 Save
+                        </button>
+                        <button onclick="cancelEditMode()" id="cancelModeBtn" class="btn btn-secondary"
+                            style="display:none; padding: 0.5rem 1rem;">
+                            ✕ Cancel
+                        </button>
+                        <button onclick="exportAttendance()" class="btn btn-primary"
+                            style="padding: 0.5rem 1rem;">Export Excel</button>
+                    </div>
+                </div>
 
-                <div id="attendanceList" class="attendance-table">
+                <div id="attendanceStats" class="stats-grid"></div>
+
+                <div id="attendanceList" class="attendance-table" style="max-height: 400px; overflow-y: auto;">
                     <div class="loading">Loading attendance...</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Video Calling Overlay Structure -->
-    <div id="videoCallOverlay" class="video-call-overlay hidden">
-        <div class="call-header">
-            <div class="call-info">
-                <div class="caller-avatar" style="width: 40px; height: 40px; margin: 0; font-size: 1rem;"
-                    id="callAvatar">📞</div>
-                <div>
-                    <h3 class="call-title" id="activeCallTitle">Meeting</h3>
-                    <div class="call-timer" id="callTimer">00:00</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="video-grid-container">
-            <div id="videoGrid" class="video-grid pip-mode">
-                <!-- Local Video -->
-                <div class="video-container local pip-view" id="localVideoContainer">
-                    <video id="localVideo" autoplay muted playsinline></video>
-                    <div class="video-label">
-                        <span class="mic-status">🎙️</span>
-                        You
-                    </div>
-                </div>
-                <!-- Remote Videos will be injected here -->
-            </div>
-        </div>
-
-        <div class="call-controls">
-            <button class="control-btn" id="toggleAudioBtn" title="Mute/Unmute">
-                🎤
-            </button>
-            <button class="control-btn" id="toggleVideoBtn" title="Start/Stop Video">
-                📹
-            </button>
-            <button class="control-btn danger end-call-btn" id="endCallBtn">
-                📞 End Call
-            </button>
-        </div>
-    </div>
-
-    <!-- Incoming Call Modal -->
-    <div id="incomingCallModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="caller-avatar">📞</div>
-            <h2 id="incomingCallName">Someone</h2>
-            <p class="modal-subtitle">is inviting you to a video call...</p>
-
-            <div class="call-action-btns">
-                <button class="call-btn btn-decline" id="declineCallBtn">Decline</button>
-                <button class="call-btn btn-accept" id="acceptCallBtn">Accept</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Load Socket.io client script -->
-    <script src="/socket.io/socket.io.js"></script>
-    <!-- Load Agora SDK -->
-    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.2.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/video-call.js"></script>
     <script src="js/teacher.js"></script>
 </body>
 

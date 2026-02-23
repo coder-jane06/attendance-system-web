@@ -4,14 +4,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mark Attendance</title>
+    <title>Mark Attendance | Attendance Manager</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .success-content {
+            text-align: center;
+        }
+
+        .success-content h1 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .success-content p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .class-summary {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .class-summary strong {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .class-summary span {
+            color: var(--text-secondary);
+        }
+
+        .class-summary small {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+    </style>
 </head>
 
 <body class="success-page">
-    <main class="success-wrap">
-        <section class="success-card" id="content">
-            <p class="loading">Processing attendance...</p>
+    <main class="login-shell">
+        <section class="login-card" id="content">
+            <div class="success-content">
+                <p class="loading">Processing attendance...</p>
+            </div>
         </section>
     </main>
 
@@ -21,14 +83,30 @@
         const token = params.get('token');
         const classId = params.get('classId');
 
+        function escapeHtml(unsafe) {
+            return (unsafe || '').toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function getAuthToken() {
+            return localStorage.getItem('token');
+        }
+
         function showError(message) {
             const content = document.getElementById('content');
             content.innerHTML = `
-                <h1>Unable to mark attendance</h1>
-                <p class="error-message">${escapeHtml(message)}</p>
-                <div class="btn-row">
-                    <a href="/login.html" class="btn btn-primary">Go to Login</a>
-                    <a href="/student.html" class="btn btn-secondary">Open Dashboard</a>
+                <div class="success-content">
+                    <div class="error-icon">⚠️</div>
+                    <h1>Unable to mark attendance</h1>
+                    <div class="error-message" style="display:inline-block; text-align:left;">${escapeHtml(message)}</div>
+                    <div class="btn-row">
+                        <a href="/login.html" class="btn btn-primary">Go to Login</a>
+                        <a href="/student.html" class="btn btn-secondary">Open Dashboard</a>
+                    </div>
                 </div>
             `;
         }
@@ -38,16 +116,19 @@
             const now = new Date().toLocaleTimeString();
 
             content.innerHTML = `
-                <h1>Attendance marked</h1>
-                <p>Your attendance has been recorded successfully.</p>
-                <div class="class-summary">
-                    <strong>${escapeHtml(classInfo.class_name)}</strong>
-                    <span>${escapeHtml(classInfo.subject)}</span>
-                    <small>Marked at ${escapeHtml(now)}</small>
-                </div>
-                <p class="muted-text">Redirecting to dashboard in <span id="timer">3</span> seconds.</p>
-                <div class="btn-row">
-                    <a href="/student.html" class="btn btn-primary">Open Dashboard</a>
+                <div class="success-content">
+                    <div class="success-icon">✅</div>
+                    <h1>Attendance marked</h1>
+                    <p>Your attendance has been recorded successfully.</p>
+                    <div class="class-summary">
+                        <strong>${escapeHtml(classInfo.class_name)}</strong>
+                        <span>${escapeHtml(classInfo.subject)}</span>
+                        <small>Marked at ${escapeHtml(now)}</small>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Redirecting to dashboard in <strong id="timer" style="color: var(--text-primary);">3</strong> seconds.</p>
+                    <div class="btn-row">
+                        <a href="/student.html" class="btn btn-primary">Open Dashboard</a>
+                    </div>
                 </div>
             `;
 
