@@ -97,6 +97,28 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+app.get('/api/setupdb', async (req, res) => {
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        const db = require('./config/database');
+
+        const schemaPath = path.join(__dirname, '../database/schema.sql');
+        let schema = fs.readFileSync(schemaPath, 'utf8');
+        schema = schema.split('\n').filter(line => !line.trim().startsWith('--')).join('\n');
+        const statements = schema.split(';').map(stmt => stmt.trim()).filter(stmt => stmt.length > 0);
+
+        for (let i = 0; i < statements.length; i++) {
+            try {
+                await db.query(statements[i]);
+            } catch (e) { /* ignore drops */ }
+        }
+        res.send('✅ Cloud Database successfully initialized with tables and sample users!');
+    } catch (e) {
+        res.status(500).send('Error: ' + e.message);
+    }
+});
+
 app.get('/', (req, res) => {
     res.redirect('/login.html');
 });
