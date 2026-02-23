@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard | Attendance Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/video-call.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-left">
+                <span class="logo">AM</span>
+                <h2>Teacher Dashboard</h2>
+            </div>
+            <div class="nav-right">
+                <a href="courses.html" class="btn btn-secondary" style="margin-right: 15px;">📚 Manage Courses</a>
+                <span id="teacherName" class="user-name"></span>
+                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard">
+        <section class="classes-section">
+            <h3>Your Classes</h3>
+            <div id="classesList" class="classes-grid">
+                <div class="loading">Loading classes...</div>
+            </div>
+        </section>
+
+        <div id="qrModal" class="modal" style="display:none;">
+            <div class="modal-content qr-modal">
+                <button class="close-btn" onclick="closeQRModal()">&times;</button>
+                <h2>Generate QR Code</h2>
+                <p class="modal-subtitle">Students need to scan within <span id="countdown">5</span> seconds</p>
+
+                <div class="qr-display">
+                    <img id="qrImage" src="" alt="QR Code">
+                    <div class="qr-timer">
+                        <div class="timer-bar">
+                            <div id="timerProgress" class="timer-progress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qr-info">
+                    <p><strong>Class:</strong> <span id="qrClassName"></span></p>
+                    <p><strong>Subject:</strong> <span id="qrSubject"></span></p>
+                    <p class="muted-text">Students can scan this QR using mobile camera.</p>
+                </div>
+
+                <button onclick="regenerateQR()" class="btn btn-primary">Regenerate QR</button>
+            </div>
+        </div>
+
+        <div id="attendanceModal" class="modal" style="display:none;">
+            <div class="modal-content attendance-modal">
+                <button class="close-btn" onclick="closeAttendanceModal()">&times;</button>
+                <h2>Attendance Record</h2>
+
+                <div class="attendance-controls">
+                    <input type="date" id="attendanceDate" class="date-input">
+                    <button onclick="loadAttendance()" class="btn btn-secondary">Load</button>
+                    <button onclick="toggleEditMode()" id="editModeBtn" class="btn btn-warning" style="display:none;">
+                        ✏️ Edit Attendance
+                    </button>
+                    <button onclick="saveManualAttendance()" id="saveModeBtn" class="btn btn-success"
+                        style="display:none;">
+                        💾 Save Changes
+                    </button>
+                    <button onclick="cancelEditMode()" id="cancelModeBtn" class="btn btn-secondary"
+                        style="display:none;">
+                        ✕ Cancel
+                    </button>
+                    <button onclick="exportAttendance()" class="btn btn-success">Export Excel</button>
+                </div>
+
+                <div id="attendanceStats" class="attendance-stats"></div>
+
+                <div id="attendanceList" class="attendance-table">
+                    <div class="loading">Loading attendance...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Calling Overlay Structure -->
+    <div id="videoCallOverlay" class="video-call-overlay hidden">
+        <div class="call-header">
+            <div class="call-info">
+                <div class="caller-avatar" style="width: 40px; height: 40px; margin: 0; font-size: 1rem;"
+                    id="callAvatar">📞</div>
+                <div>
+                    <h3 class="call-title" id="activeCallTitle">Meeting</h3>
+                    <div class="call-timer" id="callTimer">00:00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-grid-container">
+            <div id="videoGrid" class="video-grid pip-mode">
+                <!-- Local Video -->
+                <div class="video-container local pip-view" id="localVideoContainer">
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <div class="video-label">
+                        <span class="mic-status">🎙️</span>
+                        You
+                    </div>
+                </div>
+                <!-- Remote Videos will be injected here -->
+            </div>
+        </div>
+
+        <div class="call-controls">
+            <button class="control-btn" id="toggleAudioBtn" title="Mute/Unmute">
+                🎤
+            </button>
+            <button class="control-btn" id="toggleVideoBtn" title="Start/Stop Video">
+                📹
+            </button>
+            <button class="control-btn danger end-call-btn" id="endCallBtn">
+                📞 End Call
+            </button>
+        </div>
+    </div>
+
+    <!-- Incoming Call Modal -->
+    <div id="incomingCallModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="caller-avatar">📞</div>
+            <h2 id="incomingCallName">Someone</h2>
+            <p class="modal-subtitle">is inviting you to a video call...</p>
+
+            <div class="call-action-btns">
+                <button class="call-btn btn-decline" id="declineCallBtn">Decline</button>
+                <button class="call-btn btn-accept" id="acceptCallBtn">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Socket.io client script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Load Agora SDK -->
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.2.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/video-call.js"></script>
+    <script src="js/teacher.js"></script>
+</body>
+
+</html>

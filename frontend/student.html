@@ -1,0 +1,642 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Attendance Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/video-call.css">
+    <style>
+        .student-navbar {
+            background: rgba(4, 8, 20, 0.8);
+            border-bottom: 1px solid var(--border);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .nav-brand-icon {
+            font-size: 1.8rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .student-name {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .student-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 2.5rem;
+        }
+
+        .tab-button {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .tab-button:hover {
+            color: var(--primary);
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(54, 209, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .course-code {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.8rem;
+        }
+
+        .course-teacher {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .course-info-label {
+            color: var(--text-muted);
+        }
+
+        .course-info-value {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .attendance-badge {
+            background: rgba(57, 217, 138, 0.2);
+            color: var(--success);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.8rem;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.02);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card.success .stat-value {
+            color: var(--success);
+        }
+
+        .stat-card.danger .stat-value {
+            color: var(--danger);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-1);
+            border: 1px solid var(--primary);
+            border-radius: 14px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 240, 255, 0.05);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(54, 209, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .modal-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--text);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            text-align: right;
+        }
+
+        .btn-close {
+            background: rgba(54, 209, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close:hover {
+            background: var(--primary);
+            color: #081322;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="student-navbar">
+        <div class="nav-brand">
+            <span class="nav-brand-icon">📚</span>
+            <span>Student Portal</span>
+        </div>
+        <div class="nav-right">
+            <span class="student-name" id="studentName">Student</span>
+            <button onclick="logout()" class="btn btn-secondary">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="student-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Student Portal</h1>
+            <p>Track your courses and attendance records</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="switchTab('courses')">📖 Courses</button>
+            <button class="tab-button" onclick="switchTab('attendance')">✓ Attendance</button>
+        </div>
+
+        <!-- Courses Tab -->
+        <section id="coursesTab" class="tab-section active">
+            <div id="coursesList" class="courses-grid">
+                <div class="loading">Loading courses...</div>
+            </div>
+        </section>
+
+        <!-- Attendance Tab -->
+        <section id="attendanceTab" class="tab-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Classes</div>
+                    <div class="stat-value" id="totalClasses">0</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">Present</div>
+                    <div class="stat-value" id="presentCount">0</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Absent</div>
+                    <div class="stat-value" id="absentCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Attendance %</div>
+                    <div class="stat-value" id="attendancePercent">0%</div>
+                </div>
+            </div>
+
+            <div id="recentAttendance" class="loading">Loading attendance records...</div>
+        </section>
+    </div>
+
+    <!-- Course Details Modal -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCourseModal()">✕</button>
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalCourseTitle">Course Details</h2>
+            </div>
+            <div id="courseDetails" class="modal-details"></div>
+            <div class="modal-footer">
+                <button class="btn-close" onclick="closeCourseModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Calling Overlay Structure -->
+    <div id="videoCallOverlay" class="video-call-overlay hidden">
+        <div class="call-header">
+            <div class="call-info">
+                <div class="caller-avatar" style="width: 40px; height: 40px; margin: 0; font-size: 1rem;"
+                    id="callAvatar">📞</div>
+                <div>
+                    <h3 class="call-title" id="activeCallTitle">Meeting</h3>
+                    <div class="call-timer" id="callTimer">00:00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-grid-container">
+            <div id="videoGrid" class="video-grid pip-mode">
+                <!-- Local Video -->
+                <div class="video-container local pip-view" id="localVideoContainer">
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <div class="video-label">
+                        <span class="mic-status">🎙️</span>
+                        You
+                    </div>
+                </div>
+                <!-- Remote Videos will be injected here -->
+            </div>
+        </div>
+
+        <div class="call-controls">
+            <button class="control-btn" id="toggleAudioBtn" title="Mute/Unmute">
+                🎤
+            </button>
+            <button class="control-btn" id="toggleVideoBtn" title="Start/Stop Video">
+                📹
+            </button>
+            <button class="control-btn danger end-call-btn" id="endCallBtn">
+                📞 End Call
+            </button>
+        </div>
+    </div>
+
+    <!-- Incoming Call Modal -->
+    <div id="incomingCallModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="caller-avatar">📞</div>
+            <h2 id="incomingCallName">Someone</h2>
+            <p class="modal-subtitle" id="incomingCallSubtitle">is inviting you to a video call...</p>
+
+            <div class="call-action-btns">
+                <button class="call-btn btn-decline" id="declineCallBtn">Decline</button>
+                <button class="call-btn btn-accept" id="acceptCallBtn">Accept / Join</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Socket.io client script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Load Agora SDK -->
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.2.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/video-call.js"></script>
+    <script src="js/student.js"></script>
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.getElementById('coursesTab').classList.remove('active');
+            document.getElementById('attendanceTab').classList.remove('active');
+
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab and activate button
+            if (tabName === 'courses') {
+                document.getElementById('coursesTab').classList.add('active');
+                event.target.classList.add('active');
+                loadMyCourses();
+            } else if (tabName === 'attendance') {
+                document.getElementById('attendanceTab').classList.add('active');
+                event.target.classList.add('active');
+            }
+        }
+
+        async function loadMyCourses() {
+            try {
+                const token = getAuthToken();
+                const response = await fetch(`${API_BASE_URL}/courses/my-enrollment`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    displayCourses(data.courses);
+                } else {
+                    document.getElementById('coursesList').innerHTML =
+                        '<div class="empty-state"><div class="empty-icon">📚</div><p>Failed to load courses</p></div>';
+                }
+            } catch (err) {
+                console.error('Error loading courses:', err);
+                document.getElementById('coursesList').innerHTML =
+                    '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Error loading courses</p></div>';
+            }
+        }
+
+        function displayCourses(courses) {
+            const container = document.getElementById('coursesList');
+
+            if (courses.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><div class="empty-icon">📚</div><p>No courses enrolled yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => `
+                <div class="course-card" onclick="showCourseDetails(${course.id}, '${course.course_name}', ${JSON.stringify(course).replace(/'/g, "&apos;")})">
+                    <div class="course-code">${course.course_code}</div>
+                    <div class="course-name">${course.course_name}</div>
+                    <div class="course-teacher">👨‍🏫 ${course.teacher_name}</div>
+                    
+                    <div class="course-info-row">
+                        <span class="course-info-label">Section</span>
+                        <span class="course-info-value">${course.section}</span>
+                    </div>
+                    
+                    <div class="course-info-row">
+                        <span class="course-info-label">Schedule</span>
+                        <span class="course-info-value">${course.schedule || 'TBA'}</span>
+                    </div>
+                    
+                    <div class="course-info-row">
+                        <span class="course-info-label">Location</span>
+                        <span class="course-info-value">${course.room_number || 'TBA'}</span>
+                    </div>
+                    
+                    <div class="course-footer">
+                        <span class="attendance-badge">✓ ${course.attendance_count || 0} attended</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showCourseDetails(courseId, courseName, courseData) {
+            const modal = document.getElementById('courseModal');
+            document.getElementById('modalCourseTitle').textContent = courseData.course_code;
+
+            const detailsHtml = `
+                <div class="detail-item">
+                    <span class="detail-label">Course Name</span>
+                    <span class="detail-value">${courseData.course_name}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Instructor</span>
+                    <span class="detail-value">${courseData.teacher_name}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Section</span>
+                    <span class="detail-value">${courseData.section}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Class Code</span>
+                    <span class="detail-value">${courseData.class_code}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Schedule</span>
+                    <span class="detail-value">${courseData.schedule || 'TBA'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Room</span>
+                    <span class="detail-value">${courseData.room_number || 'TBA'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Credits</span>
+                    <span class="detail-value">${courseData.credits} hrs</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Attendance</span>
+                    <span class="detail-value">${courseData.attendance_count} classes</span>
+                </div>
+                
+                <div class="modal-footer" style="border:none; padding:1rem 0 0; text-align:center;">
+                    <button class="btn btn-success" onclick="start1on1Call(${courseData.teacher_id}, '${courseData.teacher_name}')" style="width: 100%; border-radius: 8px;">
+                        📞 Call Teacher
+                    </button>
+                    <!-- Peer calling disabled in demo due to complex UI to fetch all classmates -->
+                </div>
+            `;
+
+            document.getElementById('courseDetails').innerHTML = detailsHtml;
+            modal.classList.add('active');
+        }
+
+        function closeCourseModal() {
+            document.getElementById('courseModal').classList.remove('active');
+        }
+
+        window.addEventListener('load', () => {
+            const studentStr = localStorage.getItem('user');
+            if (studentStr) {
+                const user = JSON.parse(studentStr);
+                document.getElementById('studentName').textContent = user.full_name;
+            }
+            loadMyCourses();
+        });
+
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('courseModal');
+            if (event.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>

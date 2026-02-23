@@ -1,0 +1,125 @@
+Attendance System — Beginner Guide and Step-by-step Explanation
+
+Purpose
+This guide explains how the attendance manager you have in this repo works. It's written for beginners and covers the system architecture, key files, how to run and test the application locally, and common troubleshooting tips.
+
+1) High-level idea (plain language)
+- Teachers create a short-lived QR code for a class session.
+- Students scan the QR with their phone camera; the QR opens a small webpage that automatically asks the backend to "mark attendance" for that student.
+- The backend verifies the student (via JWT), ensures the QR is valid and the student is enrolled, then saves an attendance record in the database.
+
+2) Main pieces and where they live
+- Frontend (UI): `frontend/`
+  - `login.html`, `student.html`, `teacher.html`, `mark-attendance.html` — pages students and teachers use.
+  - `frontend/js/*` — small JavaScript helpers: authentication (`auth.js`), student/teacher behaviors, and `config.js` (helper functions like `getAuthToken`).
+  - `frontend/css/styles.css` — site styling (we updated it to a futuristic theme).
+- Backend (server): `backend/`
+  - `server.js` — Express.js application entry; registers API routes and serves frontend static files.
+  - `routes/auth.js` — login endpoints; issues JWT tokens on successful login.
+  - `routes/teacher.js` — teacher endpoints, including QR generation (`/api/teacher/generate-qr`).
+  - `routes/qr.js` — QR validation and attendance marking endpoint (`/api/qr/mark-attendance`).
+  - `config/database.js` — database connection helper (Postgres client wrapper).
+  - `setup-db.js` — script to create tables and load sample data (run once to initialize DB).
+- Database: Postgres tables (created by `setup-db.js`) — `users`, `classes`, `class_enrollments`, `qr_sessions`, `attendance`.
+
+3) Exact flow when teacher generates a QR and students mark attendance
+- Teacher clicks "Generate QR" in `teacher.html`. Backend does:
+  1. Create a `sessionToken` (UUID) and `expires_at` timestamp and store it in `qr_sessions` with `is_active = true`.
+  2. Generate a QR image that encodes a URL pointing to the frontend page `mark-attendance.html?token={sessionToken}&classId={classId}`.
+  3. Teacher sees the QR image on their screen with a countdown.
+- Student scans QR with phone camera → browser opens that `mark-attendance.html` link.
+  1. The page `mark-attendance.html` reads `token` and `classId` from the URL.
+  2. It reads the student's JWT from `localStorage` (stored when they logged in) using `getAuthToken()` in `frontend/js/config.js`.
+  3. The page sends a GET request to backend `/api/qr/mark-attendance?token=...&classId=...` with an `Authorization: Bearer <JWT>` header.
+- Backend `/api/qr/mark-attendance` does:
+  1. Verify JWT → extract `studentId`.
+  2. Check `class_enrollments` for (classId, studentId) — ensure student belongs to that class.
+  3. Check `qr_sessions` for `session_token=token`, `class_id=classId`, `is_active=true`, and `expires_at > NOW()`.
+  4. Check `attendance` for an existing entry for (classId, studentId, CURRENT_DATE) to prevent duplicates.
+  5. Insert row in `attendance` with `status = 'present'` and `marked_by = 'qr'`.
+  6. Return success JSON; client shows success UI.
+
+4) How authentication works (short)
+- Users (student/teacher) login via `POST /api/auth/login`.
+- Server checks credentials and returns a signed JWT containing `id`, `email`, and `role`.
+- Frontend stores JWT in `localStorage` as `authToken` and uses it in Authorization headers for protected API calls.
+- JWT secret (server signs and verifies JWT) is set in `backend/.env` as `JWT_SECRET` — keep it private.
+
+5) How to run the app locally (practical commands)
+Prerequisites:
+- Node.js installed
+- PostgreSQL running and reachable
+- `.env` in `backend/` configured with DB details and `JWT_SECRET` and `BASE_URL`
+
+Initialize DB (creates tables and sample data):
+```powershell
+cd c:\Projects\attendance-system\backend
+node setup-db.js
+```
+Start backend server (if `npm start` fails due to PowerShell policy, run node directly):
+```powershell
+cd c:\Projects\attendance-system\backend
+node server.js
+```
+Open site in browser (on the same machine):
+- http://localhost:5000
+If testing from phone on same LAN, replace `localhost` with your machine IP (e.g., `http://192.168.29.180:5000`). Ensure firewall allows that port.
+
+6) How to test the teacher→student flow quickly (manual)
+- Login as teacher (use demo creds printed by `setup-db.js`): `teacher1@university.edu / password123`.
+- Go to classes, click "Generate QR" for a class. You will see a QR image and a short timer.
+- On a phone in the same network: scan the QR; if the student is already logged in on the phone browser, `mark-attendance.html` will call backend and mark attendance.
+- If not logged in, the page will redirect to `login.html?redirect=...` so student can login and return to mark attendance.
+
+7) How to test programmatically (PowerShell example used during development)
+- Login (get JWT):
+```powershell
+$body = @{email="student1@university.edu"; password="password123"} | ConvertTo-Json
+Invoke-WebRequest -Uri "http://192.168.29.180:5000/api/auth/login" -Method POST -Headers @{"Content-Type"="application/json"} -Body $body -UseBasicParsing
+```
+- Generate QR as teacher (get `token`):
+```powershell
+$token = "<teacher_jwt>"
+$body = @{classId=1} | ConvertTo-Json
+Invoke-WebRequest -Uri "http://192.168.29.180:5000/api/teacher/generate-qr" -Method POST -Headers @{"Content-Type"="application/json"; "Authorization"="Bearer $token"} -Body $body -UseBasicParsing
+```
+- Mark attendance as student (simulate scanning):
+```powershell
+Invoke-WebRequest -Uri "http://192.168.29.180:5000/api/qr/mark-attendance?token=<qrToken>&classId=1" -Method GET -Headers @{"Authorization"="Bearer <student_jwt>"} -UseBasicParsing
+```
+- Check DB (Node quick query):
+```powershell
+cd c:\Projects\attendance-system\backend
+node -e "const db = require('./config/database'); (async () => { const r = await db.query('SELECT * FROM attendance WHERE student_id=3 AND class_id=1'); console.log(JSON.stringify(r.rows, null,2)); process.exit(0); })();"
+```
+
+8) Common problems & fixes
+- "Port 5000 already in use": find and kill process using `netstat -ano | findstr :5000` then `taskkill /PID <pid> /F`.
+- "npm start" blocked in PowerShell: run `node server.js` or set execution policy (requires admin): `Set-ExecutionPolicy RemoteSigned`.
+- "Invalid credentials" on login: ensure database was initialized by running `node setup-db.js` and use the demo emails printed by the script.
+- QR redirects but attendance not marked:
+  - Check that student is logged in and JWT is present in browser `localStorage` (key: `authToken`).
+  - Ensure `qr_sessions` table has the token and `expires_at` is in the future.
+  - Check backend logs for errors.
+- Students not enrolled: ensure `class_enrollments` contains a row for that class/student.
+
+9) Security notes (what to change for production)
+- Serve the site over HTTPS (use reverse proxy like Nginx and a TLS certificate).
+- Keep `JWT_SECRET` secret; rotate periodically.
+- Use short-lived, single-use QR tokens for additional security.
+- Protect endpoints with rate-limiting and logging for auditing.
+
+10) Next steps / improvements you might want
+- Increase `QR_VALIDITY_SECONDS` in `.env` if 5 seconds is too short for users.
+- Add server logs and an admin view to list recent `qr_sessions` and attendance events.
+- Add end-to-end automated tests for the full teacher→student→DB flow.
+- Add monitoring and alerts for backend errors.
+
+11) If you want a live walkthrough
+Tell me which part you want to walk through:
+- "Run locally" and I'll step you through commands and show the browser pages.
+- "Generate and test QR" and I'll create a sample QR and show the exact commands to simulate scanning.
+- "Read code" and I'll open and explain specific files line-by-line.
+
+---
+If anything above is unclear, say which section you want explained more simply or ask me to walk you through by running the server and trying the teacher→student flow interactively.

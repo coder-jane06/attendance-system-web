@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body class="success-page">
+    <main class="success-wrap">
+        <section class="success-card" id="content">
+            <p class="loading">Processing attendance...</p>
+        </section>
+    </main>
+
+    <script src="/js/config.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        const classId = params.get('classId');
+
+        function showError(message) {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <h1>Unable to mark attendance</h1>
+                <p class="error-message">${escapeHtml(message)}</p>
+                <div class="btn-row">
+                    <a href="/login.html" class="btn btn-primary">Go to Login</a>
+                    <a href="/student.html" class="btn btn-secondary">Open Dashboard</a>
+                </div>
+            `;
+        }
+
+        function showSuccess(classInfo) {
+            const content = document.getElementById('content');
+            const now = new Date().toLocaleTimeString();
+
+            content.innerHTML = `
+                <h1>Attendance marked</h1>
+                <p>Your attendance has been recorded successfully.</p>
+                <div class="class-summary">
+                    <strong>${escapeHtml(classInfo.class_name)}</strong>
+                    <span>${escapeHtml(classInfo.subject)}</span>
+                    <small>Marked at ${escapeHtml(now)}</small>
+                </div>
+                <p class="muted-text">Redirecting to dashboard in <span id="timer">3</span> seconds.</p>
+                <div class="btn-row">
+                    <a href="/student.html" class="btn btn-primary">Open Dashboard</a>
+                </div>
+            `;
+
+            let count = 3;
+            const timer = document.getElementById('timer');
+            const interval = setInterval(() => {
+                count -= 1;
+                timer.textContent = String(count);
+                if (count <= 0) {
+                    clearInterval(interval);
+                    window.location.href = '/student.html';
+                }
+            }, 1000);
+        }
+
+        async function markAttendance() {
+            try {
+                if (!token || !classId) {
+                    showError('Invalid QR code data. Please scan a fresh code.');
+                    return;
+                }
+
+                const authToken = getAuthToken();
+                if (!authToken) {
+                    window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+                    return;
+                }
+
+                const response = await fetch('/api/student/scan-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ token, classId })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    showError(data.message || 'Failed to mark attendance.');
+                    return;
+                }
+
+                showSuccess(data.class || { class_name: 'Class', subject: 'Attendance' });
+            } catch (error) {
+                showError(`Error marking attendance: ${error.message}`);
+            }
+        }
+
+        markAttendance();
+    </script>
+</body>
+
+</html>

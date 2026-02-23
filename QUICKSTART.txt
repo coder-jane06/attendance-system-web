@@ -1,0 +1,45 @@
+========================================
+ATTENDANCE SYSTEM - QUICK START GUIDE
+========================================
+
+BEFORE FIRST RUN:
+- Make sure Node.js is installed (download from https://nodejs.org if needed)
+- Make sure PostgreSQL database is running
+
+HOW TO RUN:
+-----------
+1. Double-click: START_SERVER.bat
+   (This starts the backend server on http://localhost:5000)
+
+2. Wait 2-3 seconds for "Attendance Management API running on port 5000"
+
+3. Double-click: OPEN_WEBSITE.bat
+   (This opens the website in your browser)
+
+4. Login with demo accounts:
+   - Teacher: teacher1@university.edu / password123
+   - Student: student1@university.edu / password123
+
+WHAT TO SHOW YOUR TEACHER:
+--------------------------
+1. Teacher Login → Generate QR Code
+2. Teacher can show QR code to students
+3. Students scan QR → Automatically marks attendance in database
+4. Show database records of attendance
+
+TO STOP:
+--------
+- Close the black command window (START_SERVER.bat)
+- Or open Task Manager and kill "node" process
+
+TROUBLESHOOTING:
+----------------
+If port 5000 is already in use:
+- Open Task Manager → Find "node.exe" → End Task
+- Then try START_SERVER.bat again
+
+If database connection fails:
+- Make sure PostgreSQL is running
+- Check that database "attendance_db" exists
+
+========================================

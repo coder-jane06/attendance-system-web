@@ -1,0 +1,295 @@
+/* Video Call Overlay Styles */
+.video-call-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 8, 20, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.video-call-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Header Area */
+.call-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    z-index: 10;
+}
+
+.call-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.call-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.call-timer {
+    font-variant-numeric: tabular-nums;
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.15);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Video Grid Area */
+.video-grid-container {
+    flex: 1;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.video-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+    max-width: 1600px;
+    transition: all 0.3s ease;
+}
+
+/* Dynamic Grid Layouts */
+.video-grid[data-users="1"] {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.video-grid[data-users="2"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+}
+
+/* Picture in Picture mode (Local user small, Remote large) */
+.video-grid.pip-mode {
+    display: block;
+}
+
+.video-container {
+    position: relative;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+/* Remote Video */
+.video-container.remote.pip-view {
+    width: 100%;
+    height: 100%;
+}
+
+/* Local Video (PiP) */
+.video-container.local.pip-view {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    width: 240px;
+    height: 160px;
+    z-index: 5;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+}
+
+.video-container.local.pip-view:hover {
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* User Labels inside video */
+.video-label {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mic-status {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mic-status.muted {
+    color: var(--danger);
+}
+
+/* Controls Area (Bottom Bar) */
+.call-controls {
+    padding: 1.5rem 2rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 10;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.control-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+.control-btn.active-state {
+    background: rgba(255,255,255,0.9);
+    color: #000;
+}
+
+.control-btn.danger {
+    background: var(--danger);
+    border-color: var(--danger);
+}
+
+.control-btn.danger:hover {
+    background: #dc2626;
+    box-shadow: 0 0 20px rgba(239,68,68,0.4);
+}
+
+.end-call-btn {
+    width: auto;
+    padding: 0 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    gap: 0.5rem;
+}
+
+/* Incoming Call Modal overrides */
+#incomingCallModal .modal-content {
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 50px rgba(59, 130, 246, 0.2);
+    animation: pulseGlow 2s infinite;
+}
+
+.caller-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 8px 20px var(--primary-glow);
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+    100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+}
+
+.call-action-btns {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.call-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-accept {
+    background: var(--success);
+    color: white;
+}
+
+.btn-accept:hover {
+    background: #059669;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-decline {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-decline:hover {
+    background: var(--danger);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Helper Class */
+.hidden {
+    display: none !important;
+}

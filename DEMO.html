@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System - Visual Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .demo-header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .screen {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Page Styles */
+        .login-demo {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-section h2 {
+            font-size: 1.75rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 0.95rem;
+        }
+
+        .demo-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .demo-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .demo-credentials {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #fef3c7;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .demo-credentials p {
+            margin: 0.25rem 0;
+        }
+
+        /* Dashboard Styles */
+        .navbar {
+            background: #667eea;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-left h2 {
+            font-size: 1.5rem;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .classes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .class-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .class-code {
+            background: rgba(255,255,255,0.3);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .class-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .class-info {
+            margin: 1rem 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .class-info p {
+            margin: 0.5rem 0;
+        }
+
+        .class-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .class-actions button {
+            flex: 1;
+            padding: 0.75rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .class-actions button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+        }
+
+        /* QR Modal */
+        .qr-display {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+        }
+
+        .qr-display h2 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .qr-subtitle {
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        .qr-code {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .qr-animation {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 4px;
+            padding: 1.5rem;
+        }
+
+        .qr-pixel {
+            background: #000;
+            border-radius: 2px;
+            animation: qrPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes qrPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .timer-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #667eea);
+            border-radius: 6px;
+            animation: timerCount 5s linear infinite;
+        }
+
+        @keyframes timerCount {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin: 1rem 0;
+        }
+
+        .qr-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .qr-info p {
+            margin: 0.5rem 0;
+            color: #2d3748;
+        }
+
+        /* Student Dashboard */
+        .scan-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .scan-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .scan-section p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .scan-btn {
+            padding: 1rem 3rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scan-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 24px rgba(255,255,255,0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card h3 {
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 32px;
+            background: #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #667eea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            transition: width 1s ease;
+        }
+
+        .progress-85 { width: 85%; }
+        .progress-67 { width: 67%; background: linear-gradient(90deg, #f59e0b, #ef4444); }
+        .progress-100 { width: 100%; }
+
+        .attendance-list {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .attendance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .attendance-item:last-child {
+            border-bottom: none;
+        }
+
+        .attendance-info h4 {
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .attendance-info p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .status-present {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-absent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Camera Demo */
+        .camera-demo {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+        }
+
+        .camera-view {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            margin: 0 auto;
+            background: linear-gradient(45deg, #1a1a1a 25%, #2d2d2d 25%, #2d2d2d 50%, #1a1a1a 50%, #1a1a1a 75%, #2d2d2d 75%, #2d2d2d);
+            background-size: 20px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-frame {
+            width: 250px;
+            height: 250px;
+            border: 3px solid #10b981;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+            animation: scanLine 2s ease-in-out infinite;
+        }
+
+        @keyframes scanLine {
+            0%, 100% { top: 0; }
+            50% { top: calc(100% - 3px); }
+        }
+
+        .scan-corners {
+            position: absolute;
+            inset: -10px;
+        }
+
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #10b981;
+        }
+
+        .corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+        .corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+        .corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        /* Attendance Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .feature-note {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+            
+            .screen {
+                padding: 1.5rem;
+            }
+
+            .classes-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .qr-code {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🎓 Attendance System Demo</h1>
+            <p>Interactive preview of all features and screens</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showScreen('login')">🔐 Login Page</button>
+            <button class="tab-btn" onclick="showScreen('teacher')">👨‍🏫 Teacher Dashboard</button>
+            <button class="tab-btn" onclick="showScreen('qr')">📱 QR Generation</button>
+            <button class="tab-btn" onclick="showScreen('student')">👨‍🎓 Student Dashboard</button>
+            <button class="tab-btn" onclick="showScreen('scanner')">📷 QR Scanner</button>
+            <button class="tab-btn" onclick="showScreen('attendance')">📊 Attendance View</button>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="login" class="screen active">
+            <div class="login-demo">
+                <div class="logo-section">
+                    <div class="logo">📚</div>
+                    <h2>Attendance System</h2>
+                    <p class="subtitle">Smart QR-Based Attendance</p>
+                </div>
+
+                <div class="demo-form">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="your.email@university.edu" value="teacher1@university.edu">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="Enter your password" value="••••••••••••">
+                    </div>
+
+                    <button class="demo-btn">Login</button>
+
+                    <div class="demo-credentials">
+                        <p><strong>Demo Accounts:</strong></p>
+                        <p><small>Teacher: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="54203135373c31266514213a3d223126273d202d7a313021">[email&#160;protected]</a></small></p>
+                        <p><small>Student: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1360676677767d672253667d7a657661607a676a3d767766">[email&#160;protected]</a></small></p>
+                        <p><small>Password: password123</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacher" class="screen">
+            <div class="navbar">
+                <div class="nav-left">
+                    <span class="logo">📚</span>
+                    <h2>Teacher Dashboard</h2>
+                </div>
+                <div>
+                    <span style="margin-right: 1rem; opacity: 0.9;">Dr. Rajesh Kumar</span>
+                    <button class="logout-btn">Logout</button>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 1.5rem; color: #2d3748; font-size: 1.5rem;">My Classes</h3>
+
+            <div class="classes-grid">
+                <div class="class-card">
+                    <div class="class-header">
+                        <div>
+                            <h3>Data Structures Lab</h3>
+                            <p style="opacity: 0.9;">Computer Science</p>
+                        </div>
+                        <span class="class-code">CS101</span>
+                    </div>
+                    <div class="class-info">
+                        <p>📅 Mon/Wed 10:00-12:00</p>
+                        <p>🚪 Lab-301</p>
+                        <p>👥 4 students enrolled</p>
+                    </div>
+                    <div class="class-actions">
+                        <button>📱 Generate QR</button>
+                        <button>📊 Attendance</button>
+                    </div>
+                </div>
+
+                <div class="class-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="class-header">
+                        <div>
+                            <h3>Database Management</h3>
+                            <p style="opacity: 0.9;">Computer Science</p>
+                        </div>
+                        <span class="class-code">CS201</span>
+                    </div>
+                    <div class="class-info">
+                        <p>📅 Tue/Thu 14:00-16:00</p>
+                        <p>🚪 Room-205</p>
+                        <p>👥 3 students enrolled</p>
+                    </div>
+                    <div class="class-actions">
+                        <button>📱 Generate QR</button>
+                        <button>📊 Attendance</button>
+                    </div>
+                </div>
+
+                <div class="class-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="class-header">
+                        <div>
+                            <h3>Calculus II</h3>
+                            <p style="opacity: 0.9;">Mathematics</p>
+                        </div>
+                        <span class="class-code">MATH101</span>
+                    </div>
+                    <div class="class-info">
+                        <p>📅 Mon/Wed/Fri 09:00-10:00</p>
+                        <p>🚪 Room-101</p>
+                        <p>👥 2 students enrolled</p>
+                    </div>
+                    <div class="class-actions">
+                        <button>📱 Generate QR</button>
+                        <button>📊 Attendance</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-note">
+                💡 <strong>Tip:</strong> Click "Generate QR" to create a time-limited QR code for students to scan
+            </div>
+        </div>
+
+        <!-- QR Generation -->
+        <div id="qr" class="screen">
+            <div class="qr-display">
+                <h2>📱 Scan QR Code</h2>
+                <p class="qr-subtitle">Students must scan within <span class="countdown">5 seconds</span></p>
+
+                <div class="qr-code">
+                    <div class="qr-animation">
+                        <div class="qr-pixel" style="animation-delay: 0s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.1s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.2s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.3s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.4s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.5s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.6s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.7s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.1s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.2s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.3s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.4s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.5s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.6s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.7s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.8s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.2s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.3s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.4s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.5s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.6s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.7s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.8s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.9s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.3s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.4s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.5s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.6s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.7s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.8s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 0.9s;"></div>
+                        <div class="qr-pixel" style="animation-delay: 1s;"></div>
+                    </div>
+                </div>
+
+                <div class="timer-bar">
+                    <div class="timer-progress"></div>
+                </div>
+
+                <div class="qr-info">
+                    <p><strong>Class:</strong> Data Structures Lab</p>
+                    <p><strong>Subject:</strong> Computer Science</p>
+                    <p><strong>Room:</strong> Lab-301</p>
+                </div>
+
+                <button class="demo-btn">🔄 Regenerate QR</button>
+
+                <div class="feature-note" style="margin-top: 2rem;">
+                    🔒 <strong>Security:</strong> QR code automatically refreshes every 5 seconds to prevent sharing
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="student" class="screen">
+            <div class="navbar">
+                <div class="nav-left">
+                    <span class="logo">📚</span>
+                    <h2>Student Dashboard</h2>
+                </div>
+                <div>
+                    <span style="margin-right: 1rem; opacity: 0.9;">Amit Patel</span>
+                    <button class="logout-btn">Logout</button>
+                </div>
+            </div>
+
+            <div class="scan-section">
+                <h2>📱 Scan QR Code</h2>
+                <p>Scan your teacher's QR code to mark attendance</p>
+                <button class="scan-btn">📷 Open Scanner</button>
+            </div>
+
+            <h3 style="margin-bottom: 1.5rem; color: #2d3748; font-size: 1.5rem;">📊 My Attendance Statistics</h3>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <h3>Data Structures Lab</h3>
+                            <span class="class-code" style="background: #667eea; color: white;">CS101</span>
+                        </div>
+                    </div>
+                    <p style="color: #718096; margin-bottom: 1rem;">Computer Science</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-85">85%</div>
+                    </div>
+                    <p style="color: #718096; font-size: 0.9rem;">17 / 20 classes attended</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <h3>Database Management</h3>
+                            <span class="class-code" style="background: #f5576c; color: white;">CS201</span>
+                        </div>
+                    </div>
+                    <p style="color: #718096; margin-bottom: 1rem;">Computer Science</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-67">67%</div>
+                    </div>
+                    <p style="color: #718096; font-size: 0.9rem;">12 / 18 classes attended</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <h3>Calculus II</h3>
+                            <span class="class-code" style="background: #00f2fe; color: white;">MATH101</span>
+                        </div>
+                    </div>
+                    <p style="color: #718096; margin-bottom: 1rem;">Mathematics</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-100">100%</div>
+                    </div>
+                    <p style="color: #718096; font-size: 0.9rem;">10 / 10 classes attended</p>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 1.5rem; color: #2d3748; font-size: 1.5rem;">📅 Recent Attendance</h3>
+
+            <div class="attendance-list">
+                <div class="attendance-item">
+                    <div class="attendance-info">
+                        <h4>Data Structures Lab</h4>
+                        <p>15 Jan 2024 • Computer Science</p>
+                    </div>
+                    <span class="status-badge status-present">✅ PRESENT</span>
+                </div>
+
+                <div class="attendance-item">
+                    <div class="attendance-info">
+                        <h4>Database Management</h4>
+                        <p>14 Jan 2024 • Computer Science</p>
+                    </div>
+                    <span class="status-badge status-present">✅ PRESENT</span>
+                </div>
+
+                <div class="attendance-item">
+                    <div class="attendance-info">
+                        <h4>Calculus II</h4>
+                        <p>13 Jan 2024 • Mathematics</p>
+                    </div>
+                    <span class="status-badge status-absent">❌ ABSENT</span>
+                </div>
+
+                <div class="attendance-item">
+                    <div class="attendance-info">
+                        <h4>Data Structures Lab</h4>
+                        <p>12 Jan 2024 • Computer Science</p>
+                    </div>
+                    <span class="status-badge status-present">✅ PRESENT</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Scanner -->
+        <div id="scanner" class="screen">
+            <div class="camera-demo">
+                <h2 style="margin-bottom: 2rem;">📷 QR Code Scanner</h2>
+                
+                <div class="camera-view">
+                    <div class="scan-frame">
+                        <div class="scan-line"></div>
+                        <div class="scan-corners">
+                            <div class="corner tl"></div>
+                            <div class="corner tr"></div>
+                            <div class="corner bl"></div>
+                            <div class="corner br"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 2rem; opacity: 0.8;">Position the QR code within the frame</p>
+
+                <div class="success-message">
+                    ✅ Success! Attendance marked successfully<br>
+                    <strong>Data Structures Lab</strong>
+                </div>
+
+                <div class="feature-note" style="background: rgba(254, 243, 199, 0.2); color: white; border: 2px solid rgba(254, 243, 199, 0.3);">
+                    📱 <strong>Live Camera:</strong> Uses your device's camera to scan QR codes in real-time
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance View -->
+        <div id="attendance" class="screen">
+            <h2 style="margin-bottom: 1rem; color: #2d3748;">📊 Attendance Record</h2>
+            <p style="color: #718096; margin-bottom: 2rem;">Data Structures Lab - CS101</p>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <input type="date" value="2024-01-15" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
+                <button class="demo-btn" style="width: auto; padding: 0.75rem 2rem;">Load</button>
+                <button class="demo-btn" style="width: auto; padding: 0.75rem 2rem; background: #10b981;">📥 Export Excel</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div style="background: #d1fae5; padding: 1.5rem; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #065f46;">12</div>
+                    <div style="color: #065f46; font-weight: 600;">Present</div>
+                </div>
+                <div style="background: #fee2e2; padding: 1.5rem; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #991b1b;">3</div>
+                    <div style="color: #991b1b; font-weight: 600;">Absent</div>
+                </div>
+                <div style="background: #dbeafe; padding: 1.5rem; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #1e40af;">80%</div>
+                    <div style="color: #1e40af; font-weight: 600;">Attendance Rate</div>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CS2021001</td>
+                            <td>Amit Patel</td>
+                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1467606170717a602554617a7d627166677d606d3a717061">[email&#160;protected]</a></td>
+                            <td><span class="status-badge status-present">PRESENT</span></td>
+                            <td>10:05 AM</td>
+                        </tr>
+                        <tr>
+                            <td>CS2021002</td>
+                            <td>Sneha Verma</td>
+                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86f5f2f3e2e3e8f2b4c6f3e8eff0e3f4f5eff2ffa8e3e2f3">[email&#160;protected]</a></td>
+                            <td><span class="status-badge status-present">PRESENT</span></td>
+                            <td>10:05 AM</td>
+                        </tr>
+                        <tr>
+                            <td>CS2021003</td>
+                            <td>Rahul Singh</td>
+                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d5a6a1a0b1b0bba1e695a0bbbca3b0a7a6bca1acfbb0b1a0">[email&#160;protected]</a></td>
+                            <td><span class="status-badge status-absent">ABSENT</span></td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>CS2021004</td>
+                            <td>Ananya Gupta</td>
+                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="097a7d7c6d6c677d3d497c67607f6c7b7a607d70276c6d7c">[email&#160;protected]</a></td>
+                            <td><span class="status-badge status-present">PRESENT</span></td>
+                            <td>10:06 AM</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="feature-note">
+                📥 <strong>Export:</strong> Download attendance as Excel file with student details, timestamps, and statistics
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        function showScreen(screenId) {
+            // Hide all 
