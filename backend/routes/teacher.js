@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
 const QRCode = require('qrcode');
 const { v4: uuidv4 } = require('uuid');
@@ -10,12 +10,14 @@ const ExcelJS = require('exceljs');
 router.get('/classes', authenticateToken, isTeacher, async (req, res) => {
     try {
         const result = await db.query(
-            `SELECT c.*, 
+                `SELECT c.*, 
+                    COALESCE(co.course_name, c.class_name) as subject,
                     COUNT(DISTINCT ce.student_id) as enrolled_students
              FROM classes c
+             LEFT JOIN courses co ON c.course_id = co.id
              LEFT JOIN class_enrollments ce ON c.id = ce.class_id
              WHERE c.teacher_id = $1
-             GROUP BY c.id
+             GROUP BY c.id, co.course_name
              ORDER BY c.created_at DESC`,
             [req.user.id]
         );
@@ -152,6 +154,13 @@ router.get('/attendance/:classId', authenticateToken, isTeacher, async (req, res
     try {
         const { classId } = req.params;
         const { date } = req.query; // Format: YYYY-MM-DD
+
+        if (!classId || classId === 'null' || classId === 'undefined') {
+            return res.status(400).json({
+                success: false,
+                message: 'A valid Class ID is required'
+            });
+        }
 
         // Verify class belongs to teacher
         const classCheck = await db.query(
@@ -314,7 +323,65 @@ router.get('/export/:classId', authenticateToken, isTeacher, async (req, res) =>
     }
 });
 
-// Manually mark attendance
+// Bulk manually mark attendance
+router.post('/mark-bulk-manual', authenticateToken, isTeacher, async (req, res) => {
+    const { classId, changes, date } = req.body;
+
+    if (!classId || !changes || !Array.isArray(changes)) {
+        return res.status(400).json({ success: false, message: 'Invalid bulk data' });
+    }
+
+    const client = await db.pool.connect();
+    let transactionStarted = false;
+
+    try {
+        const classCheck = await client.query(
+            'SELECT id FROM classes WHERE id = $1 AND teacher_id = $2',
+            [classId, req.user.id]
+        );
+
+        if (classCheck.rows.length === 0) {
+            return res.status(403).json({ success: false, message: 'Unauthorized access' });
+        }
+
+        const targetDate = date || new Date().toISOString().split('T')[0];
+
+        await client.query('BEGIN');
+        transactionStarted = true;
+
+        for (const change of changes) {
+            await client.query(
+                `INSERT INTO attendance (class_id, student_id, session_date, status, marked_by)
+                 VALUES ($1, $2, $3, $4, 'manual')
+                 ON CONFLICT (class_id, student_id, session_date)
+                 DO UPDATE SET status = $4, marked_by = 'manual', marked_at = CURRENT_TIMESTAMP`,
+                [classId, change.studentId, targetDate, change.status]
+            );
+        }
+
+        await client.query('COMMIT');
+        transactionStarted = false;
+
+        res.json({
+            success: true,
+            message: `Successfully updated ${changes.length} records`
+        });
+    } catch (error) {
+        if (transactionStarted) {
+            try {
+                await client.query('ROLLBACK');
+            } catch (rollbackErr) {
+                console.error('Bulk attendance rollback error:', rollbackErr);
+            }
+        }
+        console.error('Bulk attendance error:', error);
+        res.status(500).json({ success: false, message: 'Error updating bulk attendance' });
+    } finally {
+        client.release();
+    }
+});
+
+// Manually mark attendance (Individual)
 router.post('/mark-manual', authenticateToken, isTeacher, async (req, res) => {
     try {
         const { classId, studentId, status, date } = req.body;

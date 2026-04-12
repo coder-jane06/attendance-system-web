@@ -3,6 +3,79 @@ const router = express.Router();
 const db = require('../config/database');
 const { authenticateToken, isStudent } = require('../middleware/auth');
 
+// Enroll in a class section (capacity checked)
+router.post('/enroll', authenticateToken, isStudent, async (req, res) => {
+    try {
+        const { classId } = req.body;
+
+        if (!classId) {
+            return res.status(400).json({ success: false, message: 'classId is required' });
+        }
+
+        const cls = await db.query(
+            `SELECT c.id, c.max_strength,
+                (SELECT COUNT(*)::int FROM class_enrollments ce WHERE ce.class_id = c.id) AS enrolled_count
+             FROM classes c
+             WHERE c.id = $1`,
+            [classId]
+        );
+
+        if (cls.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Class section not found' });
+        }
+
+        const row = cls.rows[0];
+        const maxStrength = row.max_strength != null ? Number(row.max_strength) : 50;
+        if (Number(row.enrolled_count) >= maxStrength) {
+            return res.status(400).json({ success: false, message: 'This section is full' });
+        }
+
+        await db.query(
+            'INSERT INTO class_enrollments (class_id, student_id) VALUES ($1, $2)',
+            [classId, req.user.id]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'You are now enrolled in this section'
+        });
+    } catch (error) {
+        if (error.code === '23505') {
+            return res.status(400).json({
+                success: false,
+                message: 'You are already enrolled in this section'
+            });
+        }
+        console.error('Enroll error:', error);
+        res.status(500).json({ success: false, message: 'Could not complete enrollment' });
+    }
+});
+
+// Drop a section enrollment
+router.post('/unenroll', authenticateToken, isStudent, async (req, res) => {
+    try {
+        const { classId } = req.body;
+
+        if (!classId) {
+            return res.status(400).json({ success: false, message: 'classId is required' });
+        }
+
+        const result = await db.query(
+            'DELETE FROM class_enrollments WHERE class_id = $1 AND student_id = $2 RETURNING id',
+            [classId, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ success: false, message: 'You are not enrolled in this section' });
+        }
+
+        res.json({ success: true, message: 'Enrollment removed' });
+    } catch (error) {
+        console.error('Unenroll error:', error);
+        res.status(500).json({ success: false, message: 'Could not remove enrollment' });
+    }
+});
+
 // Get all enrolled classes for a student
 router.get('/classes', authenticateToken, isStudent, async (req, res) => {
     try {
@@ -116,7 +189,10 @@ router.post('/scan-qr', authenticateToken, isStudent, async (req, res) => {
 
         // Get class info
         const classInfo = await db.query(
-            'SELECT class_name, subject FROM classes WHERE id = $1',
+            `SELECT c.class_name, COALESCE(co.course_name, c.class_name) as subject
+             FROM classes c
+             LEFT JOIN courses co ON c.course_id = co.id
+             WHERE c.id = $1`,
             [classId]
         );
 
@@ -150,9 +226,10 @@ router.get('/attendance', authenticateToken, isStudent, async (req, res) => {
         const { classId, startDate, endDate } = req.query;
 
         let query = `
-            SELECT a.*, c.class_name, c.subject, c.class_code
+            SELECT a.*, c.class_name, COALESCE(co.course_name, c.class_name) AS subject, c.class_code
             FROM attendance a
             INNER JOIN classes c ON a.class_id = c.id
+            LEFT JOIN courses co ON c.course_id = co.id
             WHERE a.student_id = $1
         `;
         
@@ -187,7 +264,8 @@ router.get('/attendance', authenticateToken, isStudent, async (req, res) => {
         console.error('Get student attendance error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Error fetching attendance' 
+            message: 'Error fetching attendance',
+            error: error.message
         });
     }
 });
@@ -199,20 +277,21 @@ router.get('/statistics', authenticateToken, isStudent, async (req, res) => {
             `SELECT 
                 c.id as class_id,
                 c.class_name,
-                c.subject,
+                COALESCE(co.course_name, c.class_name) as subject,
                 c.class_code,
-                COUNT(a.id) FILTER (WHERE a.status = 'present') as present_count,
+                COUNT(CASE WHEN a.status = 'present' THEN 1 END) as present_count,
                 COUNT(a.id) as total_sessions,
-                ROUND(
-                    (COUNT(a.id) FILTER (WHERE a.status = 'present')::numeric / 
-                     NULLIF(COUNT(a.id), 0) * 100), 
-                    2
-                ) as attendance_percentage
+                CASE 
+                    WHEN COUNT(a.id) > 0 THEN 
+                        ROUND((COUNT(CASE WHEN a.status = 'present' THEN 1 END)::numeric / COUNT(a.id) * 100), 2)
+                    ELSE 0 
+                END as attendance_percentage
              FROM classes c
+             LEFT JOIN courses co ON c.course_id = co.id
              INNER JOIN class_enrollments ce ON c.id = ce.class_id
              LEFT JOIN attendance a ON a.class_id = c.id AND a.student_id = $1
              WHERE ce.student_id = $1
-             GROUP BY c.id, c.class_name, c.subject, c.class_code
+             GROUP BY c.id, c.class_name, co.course_name, c.class_code
              ORDER BY c.class_name`,
             [req.user.id]
         );
@@ -226,7 +305,8 @@ router.get('/statistics', authenticateToken, isStudent, async (req, res) => {
         console.error('Get statistics error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Error fetching statistics' 
+            message: 'Error fetching statistics',
+            error: error.message
         });
     }
 });

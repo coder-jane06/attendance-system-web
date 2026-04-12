@@ -1,355 +1,395 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard | Attendance Manager</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <style>
-        /* Specific Student Dashboard Tab Styles */
-        .tabs-container {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 0.5rem;
-        }
-
-        .tab-button {
-            padding: 0.8rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.05rem;
-            font-weight: 600;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .tab-button:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .tab-button.active {
-            color: var(--primary);
-            background: var(--primary-glow);
-        }
-
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -0.5rem;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 3px;
-        }
-
-        .tab-section {
-            display: none;
-            animation: fadeInUp 0.4s ease-out;
-        }
-
-        .tab-section.active {
-            display: block;
-        }
-
-        /* Stats specific adjustments */
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-top: 0.5rem;
-        }
-
-        .stat-card.success .stat-value {
-            color: var(--success);
-        }
-
-        .stat-card.danger .stat-value {
-            color: var(--danger);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-muted);
-            background: var(--glass-bg);
-            border-radius: 20px;
-            border: 1px dashed rgba(255, 255, 255, 0.1);
-        }
-
-        .empty-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.7;
-        }
-
-        .course-info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.9rem;
-        }
-
-        .course-info-label {
-            color: var(--text-muted);
-        }
-
-        .course-info-value {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .modal-details {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .detail-label {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .detail-value {
-            color: var(--text-primary);
-            font-weight: 600;
-            text-align: right;
-        }
-    </style>
+    <title>Student Dashboard | EduPro</title>
+    <link rel="stylesheet" href="css/stitch-screens.css">
 </head>
-
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <div class="navbar-brand">
-                <span class="brand-icon">📚</span>
-                <span>Student Portal</span>
+    <div class="ep-blob ep-blob-a"></div>
+    <div class="ep-blob ep-blob-b"></div>
+
+    <div class="ep-shell">
+        <!-- NAV -->
+        <nav class="ep-nav">
+            <a href="student.html" class="ep-brand">
+                <div class="ep-brand-mark">
+                    <i data-lucide="graduation-cap" style="width:20px;height:20px;"></i>
+                </div>
+                <span class="ep-brand-name">Edu<span>Pro</span></span>
+            </a>
+
+            <div class="ep-nav-links">
+                <a href="student.html" class="ep-navlink active">
+                    <i data-lucide="layout-dashboard" style="width:15px;height:15px;"></i> Dashboard
+                </a>
+                <a href="courses.html" class="ep-navlink">
+                    <i data-lucide="book-open" style="width:15px;height:15px;"></i> Courses
+                </a>
+                <a href="#" class="ep-navlink" onclick="switchStudentTab('history');return false;">
+                    <i data-lucide="clock" style="width:15px;height:15px;"></i> History
+                </a>
+                <a href="#" class="ep-navlink" onclick="showScanInfo();return false;">
+                    <i data-lucide="qr-code" style="width:15px;height:15px;"></i> Scan Mode
+                </a>
             </div>
-            <div class="navbar-menu">
-                <span class="user-name" id="studentName">Student</span>
-                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+
+            <div class="ep-nav-right">
+                <div class="ep-avatar" id="studentAvatar">S</div>
+                <div>
+                    <div class="ep-user-name" id="studentName">Loading…</div>
+                    <div class="ep-user-role">Student</div>
+                </div>
+                <button class="ep-icon-btn" onclick="logout()" title="Logout">
+                    <i data-lucide="log-out" style="width:16px;height:16px;"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- BODY -->
+        <div class="ep-content">
+            <!-- SIDEBAR -->
+            <aside class="ep-sidebar">
+                <div class="ep-sidebar-section-title">Navigation</div>
+                <a href="student.html" class="ep-sidebar-item active">
+                    <i data-lucide="home" style="width:16px;height:16px;"></i> Dashboard
+                </a>
+                <a href="courses.html" class="ep-sidebar-item">
+                    <i data-lucide="book-open" style="width:16px;height:16px;"></i> Browse courses
+                </a>
+                <button class="ep-sidebar-item" onclick="switchStudentTab('history')">
+                    <i data-lucide="clock" style="width:16px;height:16px;"></i> Attendance History
+                </button>
+                <button class="ep-sidebar-item" onclick="showScanInfo()">
+                    <i data-lucide="scan-line" style="width:16px;height:16px;"></i> Scan Mode
+                </button>
+
+                <div class="ep-sidebar-spacer"></div>
+
+                <div class="ep-sidebar-footer">
+                    <div class="ep-avatar" id="sideStudentAvatar">S</div>
+                    <div>
+                        <div class="ep-user-name" id="sideStudentName">—</div>
+                        <div class="ep-user-role">Student portal</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN -->
+            <main class="ep-main">
+                <!-- Header -->
+                <div class="ep-page-header">
+                    <div>
+                        <h1>Hello, <span id="studentFirstName">there</span>.</h1>
+                        <p>Track your progress and attendance records.</p>
+                    </div>
+                    <button onclick="showScanInfo()" class="ep-btn ep-btn-primary">
+                        <i data-lucide="qr-code" style="width:15px;height:15px;"></i> Scan QR
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="ep-stats-row">
+                    <div class="ep-stat-tile">
+                        <div class="ep-stat-icon" style="background:rgba(139,151,232,0.12);color:var(--blue);">
+                            <i data-lucide="book-open" style="width:20px;height:20px;"></i>
+                        </div>
+                        <div class="ep-stat-value" id="totalClasses">—</div>
+                        <div class="ep-stat-label">Enrolled Courses</div>
+                    </div>
+                    <div class="ep-stat-tile">
+                        <div class="ep-stat-icon" style="background:rgba(34,197,94,0.1);color:#22c55e;">
+                            <i data-lucide="check-circle-2" style="width:20px;height:20px;"></i>
+                        </div>
+                        <div class="ep-stat-value" id="presentCount">—</div>
+                        <div class="ep-stat-label">Sessions Present</div>
+                    </div>
+                    <div class="ep-stat-tile">
+                        <div class="ep-stat-icon" style="background:rgba(239,68,68,0.1);color:#ef4444;">
+                            <i data-lucide="x-circle" style="width:20px;height:20px;"></i>
+                        </div>
+                        <div class="ep-stat-value" id="absentCount">—</div>
+                        <div class="ep-stat-label">Sessions Absent</div>
+                    </div>
+                    <div class="ep-stat-tile">
+                        <div class="ep-stat-icon" style="background:rgba(222,121,184,0.12);color:var(--accent);">
+                            <i data-lucide="trending-up" style="width:20px;height:20px;"></i>
+                        </div>
+                        <div class="ep-stat-value" id="attendancePercent">—</div>
+                        <div class="ep-stat-label">Overall Rate</div>
+                    </div>
+                </div>
+
+                <!-- Tabbed Main Panel -->
+                <div class="ep-panel">
+                    <div class="ep-panel-header">
+                        <div>
+                            <div class="ep-panel-title" id="mainPanelTitle">My Courses</div>
+                            <div class="ep-panel-subtitle" id="mainPanelSub">Your enrolled classes</div>
+                        </div>
+                        <div class="ep-tabs">
+                            <button class="ep-tab active" id="tabCourses" onclick="switchStudentTab('courses')">My Courses</button>
+                            <button class="ep-tab" id="tabBrowse" onclick="switchStudentTab('browse')">Browse All</button>
+                            <button class="ep-tab" id="tabHistory" onclick="switchStudentTab('history')">History</button>
+                        </div>
+                    </div>
+
+                    <!-- Courses Pane -->
+                    <div id="paneCourses">
+                        <div id="statisticsList" class="ep-course-grid">
+                            <div class="loading">Loading your courses…</div>
+                        </div>
+                    </div>
+
+                    <!-- Browse Pane -->
+                    <div id="paneBrowse" style="display:none;">
+                        <div id="browseList" class="ep-course-grid">
+                            <div class="loading">Fetching available courses…</div>
+                        </div>
+                    </div>
+
+                    <!-- History Pane -->
+                    <div id="paneHistory" style="display:none;">
+                        <div id="recentAttendance" class="loading">Loading attendance records…</div>
+                    </div>
+                </div>
+            </main>
+        <!-- Scan Instructions Modal -->
+        <div id="scanInfoModal" class="modal">
+            <div class="modal-content" style="max-width:440px; text-align:center;">
+                <button class="modal-close" onclick="closeScanModal()"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
+                <div class="status-orb" style="background:rgba(139,151,232,0.15); color:var(--blue); margin: 0 auto 24px; width:64px; height:64px; border-radius:20px; display:grid; place-items:center;">
+                    <i data-lucide="camera" style="width:32px;height:32px;"></i>
+                </div>
+                <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:8px;">Scan Attendance</h2>
+                <p style="color:var(--muted); font-size:0.9rem; margin-bottom:28px;">Attendance is verified through the teacher's secure QR link.</p>
+                
+                <div style="text-align:left; background:rgba(220,212,240,0.18); padding:20px; border-radius:20px; margin-bottom:28px;">
+                    <div style="display:flex; gap:12px; margin-bottom:16px;">
+                        <span style="width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">1</span>
+                        <p style="font-size:0.85rem;color:var(--text);">Wait for the teacher to display the <strong>Live QR Code</strong>.</p>
+                    </div>
+                    <div style="display:flex; gap:12px;">
+                        <span style="width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">2</span>
+                        <p style="font-size:0.85rem;color:var(--text);">Scan the code using your <strong>phone camera</strong> or any QR scanner.</p>
+                    </div>
+                </div>
+
+                <button onclick="closeScanModal()" class="ep-btn ep-btn-primary" style="width:100%; justify-content:center; padding:12px;">
+                    Got it!
+                </button>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <div class="dashboard-container">
-        <!-- Page Header -->
-        <div style="margin-bottom: 3rem;">
-            <h1>Student Portal</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 0.5rem;">Track your courses and
-                attendance records</p>
         </div>
-
-        <!-- Tabs -->
-        <div class="tabs-container">
-            <button class="tab-button active" onclick="switchTab('courses')">📖 Courses</button>
-            <button class="tab-button" onclick="switchTab('attendance')">✓ Attendance</button>
-        </div>
-
-        <!-- Courses Tab -->
-        <section id="coursesTab" class="tab-section active">
-            <div id="coursesList" class="courses-grid">
-                <div class="loading">Loading courses...</div>
-            </div>
-        </section>
-
-        <!-- Attendance Tab -->
-        <section id="attendanceTab" class="tab-section">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Classes</div>
-                    <div class="stat-value" id="totalClasses">0</div>
-                </div>
-                <div class="stat-card success">
-                    <div class="stat-label">Present</div>
-                    <div class="stat-value" id="presentCount">0</div>
-                </div>
-                <div class="stat-card danger">
-                    <div class="stat-label">Absent</div>
-                    <div class="stat-value" id="absentCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Attendance %</div>
-                    <div class="stat-value text-gradient" id="attendancePercent">0%</div>
-                </div>
-            </div>
-
-            <div id="recentAttendance" class="loading">Loading attendance records...</div>
-        </section>
     </div>
 
-    <!-- Course Details Modal -->
-    <div id="courseModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeCourseModal()">✕</button>
-            <div style="margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                <h2 id="modalCourseTitle">Course Details</h2>
-            </div>
-            <div id="courseDetails" class="modal-details"></div>
-            <div style="margin-top: 2rem; display:flex; justify-content:flex-end; gap:1rem;">
-                <button class="btn btn-secondary" onclick="closeCourseModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
     <script src="js/config.js"></script>
     <script src="js/student.js"></script>
+    <script src="js/animations.js"></script>
     <script>
-        function switchTab(tabName) {
-            document.getElementById('coursesTab').classList.remove('active');
-            document.getElementById('attendanceTab').classList.remove('active');
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        // -- Tab switcher --
+        function switchStudentTab(tab) {
+            document.getElementById('paneCourses').style.display = tab === 'courses' ? 'block' : 'none';
+            document.getElementById('paneBrowse').style.display  = tab === 'browse' ? 'block' : 'none';
+            document.getElementById('paneHistory').style.display = tab === 'history' ? 'block' : 'none';
 
-            if (tabName === 'courses') {
-                document.getElementById('coursesTab').classList.add('active');
-                event.target.classList.add('active');
-                loadMyCourses();
-            } else if (tabName === 'attendance') {
-                document.getElementById('attendanceTab').classList.add('active');
-                event.target.classList.add('active');
+            document.getElementById('tabCourses').classList.toggle('active', tab === 'courses');
+            document.getElementById('tabBrowse').classList.toggle('active', tab === 'browse');
+            document.getElementById('tabHistory').classList.toggle('active', tab === 'history');
+
+            // Update sidebar active state
+            document.querySelectorAll('.ep-sidebar-item').forEach(el => el.classList.remove('active'));
+            if (tab === 'courses') {
+                document.querySelector('.ep-sidebar-item[onclick*="courses"]')?.classList.add('active');
+            } else if (tab === 'browse') {
+                document.querySelector('.ep-sidebar-item[onclick*="browse"]')?.classList.add('active');
+            } else if (tab === 'history') {
+                document.querySelector('.ep-sidebar-item[onclick*="history"]')?.classList.add('active');
+            }
+
+            const titles = {
+                courses: ['My Courses', 'Your enrolled classes'],
+                browse:  ['Browse Courses', 'Explore and enroll in new subjects'],
+                history: ['Attendance History', 'Recent session records']
+            };
+            const titleEl = document.getElementById('mainPanelTitle');
+            const subEl = document.getElementById('mainPanelSub');
+            if (titleEl) titleEl.textContent = titles[tab][0];
+            if (subEl) subEl.textContent   = titles[tab][1];
+
+            if (tab === 'browse' && typeof loadAvailableCourses === 'function') {
+                loadAvailableCourses();
             }
         }
 
-        async function loadMyCourses() {
-            try {
-                const token = getAuthToken();
-                const response = await fetch(`${API_BASE_URL}/courses/my-enrollment`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    displayCourses(data.courses);
-                } else {
-                    document.getElementById('coursesList').innerHTML =
-                        '<div class="empty-state"><div class="empty-icon">📚</div><p>Failed to load courses</p></div>';
-                }
-            } catch (err) {
-                console.error('Error loading courses:', err);
-                document.getElementById('coursesList').innerHTML =
-                    '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Error loading courses</p></div>';
-            }
-        }
-
-        function displayCourses(courses) {
-            const container = document.getElementById('coursesList');
-
-            if (courses.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><div class="empty-icon">📚</div><p>No courses enrolled yet</p></div>';
+        // -- Override displayStatistics to render premium course cards --
+        window.displayStatistics = function(stats) {
+            updateSummaryStats(stats);
+            const container = document.getElementById('statisticsList');
+            if (!stats.length) {
+                container.innerHTML = '<p class="loading">No courses found. Ask your teacher to enroll you.</p>';
                 return;
             }
 
-            container.innerHTML = courses.map(course => `
-                <div class="class-card" style="cursor: pointer;" onclick="showCourseDetails(${course.id}, '${course.course_name}', ${JSON.stringify(course).replace(/'/g, "&apos;")})">
-                    <div class="class-header">
-                        <span class="class-code">${course.course_code}</span>
-                    </div>
-                    <div style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">${course.course_name}</div>
-                    <div style="color: var(--text-muted); margin-bottom: 1.5rem;">👨‍🏫 ${course.teacher_name}</div>
-                    
-                    <div class="course-info-row">
-                        <span class="course-info-label">Section</span>
-                        <span class="course-info-value">${course.section}</span>
-                    </div>
-                    
-                    <div class="course-info-row">
-                        <span class="course-info-label">Schedule</span>
-                        <span class="course-info-value">${course.schedule || 'TBA'}</span>
-                    </div>
-                    
-                    <div class="course-info-row">
-                        <span class="course-info-label">Location</span>
-                        <span class="course-info-value">${course.room_number || 'TBA'}</span>
-                    </div>
-                    
-                    <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                        <span class="status-badge status-present">✓ ${course.attendance_count || 0} attended</span>
-                    </div>
-                </div>
-            `).join('');
-        }
+            const palette = [
+                'linear-gradient(135deg,#a18cd1,#fbc2eb)',
+                'linear-gradient(135deg,#84fab0,#8fd3f4)',
+                'linear-gradient(135deg,#fccb90,#d57eeb)',
+                'linear-gradient(135deg,#e0c3fc,#8ec5fc)',
+                'linear-gradient(135deg,#f9d423,#ff4e50)',
+            ];
 
-        function showCourseDetails(courseId, courseName, courseData) {
-            const modal = document.getElementById('courseModal');
-            document.getElementById('modalCourseTitle').textContent = courseData.course_code;
+            container.innerHTML = stats.map((stat, i) => {
+                const pct = parseFloat(stat.attendance_percentage) || 0;
+                const bg  = palette[i % palette.length];
+                const pill = pct >= 85
+                    ? `<span class="ep-pill ep-pill-green">${pct}%</span>`
+                    : pct >= 75
+                    ? `<span class="ep-pill" style="background:rgba(245,158,11,0.12);color:#b45309;">${pct}%</span>`
+                    : `<span class="ep-pill ep-pill-red">${pct}%</span>`;
 
-            const detailsHtml = `
-                <div class="detail-item">
-                    <span class="detail-label">Course Name</span>
-                    <span class="detail-value">${courseData.course_name}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Instructor</span>
-                    <span class="detail-value">${courseData.teacher_name}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Section</span>
-                    <span class="detail-value">${courseData.section}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Class Code</span>
-                    <span class="detail-value">${courseData.class_code}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Schedule</span>
-                    <span class="detail-value">${courseData.schedule || 'TBA'}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Room</span>
-                    <span class="detail-value">${courseData.room_number || 'TBA'}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Credits</span>
-                    <span class="detail-value">${courseData.credits} hrs</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Attendance</span>
-                    <span class="detail-value">${courseData.attendance_count} classes</span>
+                return `
+                    <div class="ep-course-card">
+                        <div class="ep-course-hero" style="background:${bg};">
+                            <div style="font-size:3rem;opacity:0.2;font-weight:900;color:#000;">${stat.class_code.charAt(0)}</div>
+                            <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 16px;background:rgba(255,255,255,0.18);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.25);display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-weight:700;font-size:0.8rem;color:#fff;">${escapeHtml(stat.class_code)}</span>
+                                ${pill}
+                            </div>
+                        </div>
+                        <div class="ep-course-body">
+                            <div class="ep-course-title">${escapeHtml(stat.class_name)}</div>
+                            <div class="ep-course-instructor">${escapeHtml(stat.subject)}</div>
+                            <div class="ep-progress-bar">
+                                <div class="ep-progress-fill" style="width:${pct}%;"></div>
+                            </div>
+                            <div class="ep-progress-label">
+                                <span>${stat.present_count || 0} attended</span>
+                                <span>${stat.total_sessions || 0} total</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+            gsap.from('.ep-course-card', { y:24, opacity:0, duration:0.6, stagger:0.1, ease:'power2.out' });
+        };
+
+        // -- Override displayAvailableCourses --
+        window.displayAvailableCourses = function(courses) {
+            const container = document.getElementById('browseList');
+            if (!courses.length) {
+                container.innerHTML = '<p class="loading">No available courses found.</p>';
+                return;
+            }
+
+            const palette = [
+                'linear-gradient(135deg,#667eea,#764ba2)',
+                'linear-gradient(135deg,#ff9a9e,#fecfef)',
+                'linear-gradient(135deg,#f6d365,#fda085)',
+                'linear-gradient(135deg,#a8edea,#fed6e3)',
+                'linear-gradient(135deg,#84fab0,#8fd3f4)',
+            ];
+
+            container.innerHTML = courses.map((course, i) => {
+                const bg = palette[i % palette.length];
+                return `
+                    <div class="ep-course-card">
+                        <div class="ep-course-hero" style="background:${bg};">
+                            <div style="font-size:3rem;opacity:0.15;font-weight:900;color:#000;">${course.course_code.charAt(0)}</div>
+                            <div style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.2);backdrop-filter:blur(8px);padding:4px 12px;border-radius:12px;font-size:0.75rem;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,0.25);">
+                                ${course.credits} Credits
+                            </div>
+                        </div>
+                        <div class="ep-course-body">
+                            <div class="ep-course-title">${escapeHtml(course.course_name)}</div>
+                            <div class="ep-course-instructor">${escapeHtml(course.teacher_name || 'Department Head')}</div>
+                            <div style="margin-top:12px; font-size:0.8rem; color:var(--muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.8em;">
+                                ${escapeHtml(course.subject_description || 'No description available.')}
+                            </div>
+                            <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:0.75rem; color:var(--muted); font-weight:600;">${course.num_sections || 0} SECTIONS</span>
+                                <button onclick="handleEnroll('${course.id}')" class="ep-btn ep-btn-primary" style="padding:6px 16px; font-size:0.85rem;">
+                                    Join
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+            gsap.from('#paneBrowse .ep-course-card', { y:24, opacity:0, duration:0.6, stagger:0.08, ease:'power2.out' });
+        };
+
+        // -- Override displayRecentAttendance --
+        window.displayRecentAttendance = function(attendance) {
+            const container = document.getElementById('recentAttendance');
+            if (!attendance.length) {
+                container.innerHTML = '<p class="loading">No attendance records yet.</p>';
+                return;
+            }
+            container.innerHTML = `
+                <div class="ep-table-wrap">
+                    <table class="ep-table">
+                        <thead>
+                            <tr><th>Class</th><th>Subject</th><th>Date</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            ${attendance.map(r => {
+                                const status = r.status === 'present' ? 'present' : 'absent';
+                                const date = new Date(r.session_date).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});
+                                return `<tr>
+                                    <td style="font-weight:600;">${escapeHtml(r.class_name)}</td>
+                                    <td style="color:var(--muted);">${escapeHtml(r.subject)}</td>
+                                    <td style="color:var(--muted);">${date}</td>
+                                    <td><span class="status-${status}">${status.toUpperCase()}</span></td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
                 </div>
             `;
+        };
 
-            document.getElementById('courseDetails').innerHTML = detailsHtml;
-            modal.classList.add('active');
-        }
-
-        function closeCourseModal() {
-            document.getElementById('courseModal').classList.remove('active');
-        }
-
-        window.addEventListener('load', () => {
-            const studentStr = localStorage.getItem('user');
-            if (studentStr) {
-                const user = JSON.parse(studentStr);
-                document.getElementById('studentName').textContent = user.full_name;
+        // -- Scan Info Modal --
+        function showScanInfo() {
+            const modal = document.getElementById('scanInfoModal');
+            if (modal) {
+                modal.classList.add('active');
+                gsap.from("#scanInfoModal .modal-content", { scale: 0.9, opacity: 0, duration: 0.4, ease: "back.out(1.7)" });
+                if (typeof lucide !== 'undefined') lucide.createIcons();
             }
-            loadMyCourses();
-        });
+        }
 
-        window.addEventListener('click', (event) => {
-            const modal = document.getElementById('courseModal');
-            if (event.target === modal) {
-                modal.classList.remove('active');
+        function closeScanModal() {
+            const modal = document.getElementById('scanInfoModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        // -- User info --
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getUserData();
+            if (user) {
+                const name = user.full_name;
+                ['studentName','sideStudentName'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = name;
+                });
+                ['studentAvatar','sideStudentAvatar'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = name.charAt(0).toUpperCase();
+                });
+                const fn = document.getElementById('studentFirstName');
+                if (fn) fn.textContent = name.split(' ')[0];
             }
         });
     </script>
 </body>
-
 </html>

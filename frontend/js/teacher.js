@@ -1,4 +1,4 @@
-﻿if (!requireAuth('teacher')) {
+if (!requireAuth('teacher')) {
     // Redirect handled in requireAuth
 }
 
@@ -12,6 +12,13 @@ let classMap = new Map();
 let isAttendanceEditMode = false;
 let currentAttendanceData = [];
 let attendanceChanges = {}; // Track changes for manual marking
+
+document.addEventListener('DOMContentLoaded', () => {
+    const quickGenerateBtn = document.getElementById('quickGenerateQr');
+    if (quickGenerateBtn) {
+        quickGenerateBtn.addEventListener('click', quickGenerateQR);
+    }
+});
 
 loadClasses();
 
@@ -37,33 +44,67 @@ function displayClasses(classes) {
         return;
     }
 
+    if (!currentClassId) {
+        currentClassId = Number(classes[0].id);
+    }
+
+    // Update global stat tiles
+    const tc = document.getElementById('totalClassesCount');
+    if (tc) tc.textContent = classes.length;
+    const ts = document.getElementById('totalStudentsCount');
+    if (ts) {
+        const total = classes.reduce((acc, cls) => acc + (Number(cls.enrolled_students) || 0), 0);
+        ts.textContent = total;
+    }
+
     container.innerHTML = classes.map((cls) => `
-        <article class="class-card">
-            <div class="class-header">
-                <div>
-                    <h4>${escapeHtml(cls.class_name)}</h4>
-                    <p>${escapeHtml(cls.subject)}</p>
-                </div>
-                <span class="class-code">${escapeHtml(cls.class_code)}</span>
+        <div class="ep-class-row">
+            <div class="ep-class-badge">
+                <i data-lucide="layers" style="width:18px;height:18px;"></i>
             </div>
-            <div class="class-info-item">
-                <span class="class-info-label">Schedule </span>
-                <span>${escapeHtml(cls.schedule || 'Not scheduled')}</span>
+            <div class="ep-class-info">
+                <div class="ep-class-name">${escapeHtml(cls.class_name)}</div>
+                <div class="ep-class-meta">${escapeHtml(cls.schedule || 'Schedule TBA')} · ${escapeHtml(cls.room_number || 'Room TBA')} · ${Number(cls.enrolled_students) || 0} students</div>
             </div>
-            <div class="class-info-item">
-                <span class="class-info-label">Room </span>
-                <span>${escapeHtml(cls.room_number || 'Not assigned')}</span>
+            <div class="ep-class-actions">
+                <button class="ep-btn ep-btn-primary ep-btn-sm" onclick="generateQR(${Number(cls.id)})">
+                    <i data-lucide="qr-code" style="width:13px;height:13px;"></i> QR
+                </button>
+                <button class="ep-btn ep-btn-ghost ep-btn-sm" onclick="viewAttendance(${Number(cls.id)})">
+                    <i data-lucide="file-text" style="width:13px;height:13px;"></i> Logs
+                </button>
             </div>
-            <div class="class-info-item">
-                <span class="class-info-label">Students </span>
-                <span>${Number(cls.enrolled_students) || 0}</span>
-            </div>
-            <div class="class-actions">
-                <button class="btn btn-primary" onclick="generateQR(${Number(cls.id)})">Generate QR</button>
-                <button class="btn btn-secondary" onclick="viewAttendance(${Number(cls.id)})">View Attendance</button>
-            </div>
-        </article>
+        </div>
     `).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    if (typeof gsap !== 'undefined') {
+        gsap.from('.ep-class-row', { y: 16, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out' });
+    }
+}
+
+function quickGenerateQR() {
+    if (!currentClassId) {
+        alert('No classes available yet.');
+        return;
+    }
+    generateQR(currentClassId);
+}
+
+function quickViewAttendance() {
+    if (!currentClassId) {
+        alert('No classes available yet.');
+        return;
+    }
+    viewAttendance(currentClassId);
+}
+
+function quickExportAttendance() {
+    if (!currentClassId) {
+        alert('No classes available yet.');
+        return;
+    }
+    exportAttendance();
 }
 
 async function generateQR(classId) {
@@ -144,27 +185,43 @@ function closeQRModal() {
 }
 
 async function viewAttendance(classId) {
-    currentClassId = classId;
+    currentClassId = Number(classId);
+    
+    // Switch to logs tab visually
+    const logTab = document.getElementById('tabLogs');
+    if (logTab) logTab.click(); 
 
+    // Set today's date
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('attendanceDate').value = today;
-    document.getElementById('attendanceModal').classList.add('active');
+    const dateInput = document.getElementById('attendanceDate');
+    if (dateInput) {
+        dateInput.value = today;
+    }
 
+    // Load data immediately
     await loadAttendance();
 }
 
 async function loadAttendance() {
-    const date = document.getElementById('attendanceDate').value;
+    const dateInput = document.getElementById('attendanceDate');
+    const date = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+    const attendeeListEl = document.getElementById('attendanceList');
+
+    if (!currentClassId) {
+        if (attendeeListEl) attendeeListEl.innerHTML = '<p class="error-message">Please select a class from the dashboard first.</p>';
+        return;
+    }
 
     try {
+        if (attendeeListEl) attendeeListEl.innerHTML = '<div class="loading">Fetching records...</div>';
         const response = await apiCall(`/teacher/attendance/${currentClassId}?date=${date}`);
 
         if (response.success) {
             displayAttendance(response.attendance);
         }
     } catch (error) {
-        document.getElementById('attendanceList').innerHTML =
-            '<p class="error-message">Failed to load attendance.</p>';
+        if (attendeeListEl) attendeeListEl.innerHTML =
+            '<p class="error-message">Failed to load attendance logs.</p>';
     }
 }
 
@@ -178,89 +235,86 @@ function displayAttendance(attendance) {
 
 function updateAttendanceDisplay() {
     const attendance = currentAttendanceData;
+    const attendeeListEl = document.getElementById('attendanceList');
+    if (!attendeeListEl) return;
+
     const presentCount = attendance.filter((a) => {
-        // Check for pending changes first
-        if (attendanceChanges[a.id] !== undefined) {
-            return attendanceChanges[a.id] === 'present';
-        }
+        if (attendanceChanges[a.id] !== undefined) return attendanceChanges[a.id] === 'present';
         return a.status === 'present';
     }).length;
     const absentCount = attendance.length - presentCount;
-    const percentage = attendance.length > 0
-        ? ((presentCount / attendance.length) * 100).toFixed(1)
-        : 0;
+    const percentage = attendance.length > 0 ? ((presentCount / attendance.length) * 100).toFixed(1) : 0;
 
-    document.getElementById('attendanceStats').innerHTML = `
-        <div class="stat-card">
-            <div class="stat-number">${presentCount}</div>
-            <div class="stat-label">Present</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">${absentCount}</div>
-            <div class="stat-label">Absent</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">${percentage}%</div>
-            <div class="stat-label">Attendance</div>
-        </div>
-    `;
+    const statsEl = document.getElementById('attendanceStats');
+    if (statsEl) {
+        statsEl.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-number" style="color:#22c55e;">${presentCount}</div>
+                <div class="stat-label">Present</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color:#ef4444;">${absentCount}</div>
+                <div class="stat-label">Absent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--blue);">${percentage}%</div>
+                <div class="stat-label">Attendance</div>
+            </div>
+        `;
+    }
 
-    document.getElementById('attendanceList').innerHTML = `
-        <table>
+    attendeeListEl.innerHTML = `
+        <table class="ep-table">
             <thead>
                 <tr>
                     <th>Student ID</th>
                     <th>Name</th>
                     <th>Status</th>
-                    <th>Marked At</th>
-                    ${isAttendanceEditMode ? '<th>Actions</th>' : ''}
+                    <th>Records</th>
+                    ${isAttendanceEditMode ? '<th style="text-align:right;">Actions</th>' : ''}
                 </tr>
             </thead>
             <tbody>
                 ${attendance.map((student) => {
-        let status = student.status === 'present' ? 'present' : 'absent';
-        // Check for pending changes
-        if (attendanceChanges[student.id] !== undefined) {
-            status = attendanceChanges[student.id];
-        }
+                    let status = student.status === 'present' ? 'present' : 'absent';
+                    const isPending = attendanceChanges[student.id] !== undefined;
+                    if (isPending) status = attendanceChanges[student.id];
 
-        const markedAt = student.marked_at ? new Date(student.marked_at).toLocaleTimeString() : '-';
-        const markedBy = student.marked_by ? student.marked_by.toUpperCase() : '-';
+                    const markedAt = student.marked_at ? new Date(student.marked_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                    const markedBy = student.marked_by ? student.marked_by.toUpperCase() : '';
 
-        let actionButtons = '';
-        if (isAttendanceEditMode) {
-            const isPending = attendanceChanges[student.id] !== undefined;
-            const pendingStatus = attendanceChanges[student.id];
-
-            actionButtons = `
-                            <td class="action-buttons">
-                                <button class="btn-small ${status === 'present' ? 'btn-active' : ''}" 
-                                    onclick="markAttendanceForStudent(${Number(student.id)}, 'present', '${student.student_id}')">
-                                    ✓ Present
-                                </button>
-                                <button class="btn-small ${status === 'absent' ? 'btn-active' : ''}" 
-                                    onclick="markAttendanceForStudent(${Number(student.id)}, 'absent', '${student.student_id}')">
-                                    ✕ Absent
-                                </button>
-                                ${isPending ? '<span class="pending-indicator">*</span>' : ''}
+                    return `
+                        <tr class="${isPending ? 'ep-row-modified' : ''}">
+                            <td data-label="Student ID"><code class="ep-id-code">${escapeHtml(student.student_id)}</code></td>
+                            <td data-label="Name" style="font-weight:600;">${escapeHtml(student.full_name)}</td>
+                            <td data-label="Status">
+                                <span class="status-badge status-${status}">${status.toUpperCase()}</span>
+                                ${isPending ? '<span class="ep-pill ep-pill-pink" style="margin-left:8px;font-size:0.6rem;">MODIFIED</span>' : ''}
                             </td>
-                        `;
-        }
-
-        return `
-                    <tr>
-                        <td>${escapeHtml(student.student_id)}</td>
-                        <td>${escapeHtml(student.full_name)}</td>
-                        <td>
-                            <span class="status-badge status-${status}">${status.toUpperCase()}</span>
-                        </td>
-                        <td><small>${markedBy !== '-' ? escapeHtml(markedAt) + ' (' + markedBy + ')' : '-'}</small></td>
-                        ${actionButtons}
-                    </tr>`;
-    }).join('')}
+                            <td data-label="Records" style="color:var(--muted); font-size:0.8rem;">
+                                ${markedBy ? `${markedAt} <span style="opacity:0.5; font-size:0.75rem;">(${markedBy})</span>` : '<span style="opacity:0.3">—</span>'}
+                            </td>
+                            ${isAttendanceEditMode ? `
+                                <td data-label="Actions" style="text-align:right;">
+                                    <div style="display:inline-flex; gap:8px;">
+                                        <button class="ep-btn ${status === 'present' ? 'ep-btn-primary' : 'ep-btn-ghost'} ep-btn-sm" 
+                                            onclick="markAttendanceForStudent(${student.id}, 'present')" title="Mark Present">
+                                            <i data-lucide="check" style="width:14px;height:14px;"></i>
+                                        </button>
+                                        <button class="ep-btn ${status === 'absent' ? 'ep-btn-danger-alt' : 'ep-btn-ghost'} ep-btn-sm" 
+                                            onclick="markAttendanceForStudent(${student.id}, 'absent')" title="Mark Absent">
+                                            <i data-lucide="x" style="width:14px;height:14px;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            ` : ''}
+                        </tr>`;
+                }).join('')}
             </tbody>
         </table>
     `;
+    
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function updateEditModeButtons() {
@@ -299,41 +353,49 @@ function markAttendanceForStudent(studentId, status, studentCode) {
 
 async function saveManualAttendance() {
     if (Object.keys(attendanceChanges).length === 0) {
-        alert('No changes to save.');
         return;
     }
 
+    const saveBtn = document.getElementById('saveModeBtn');
+    const origText = saveBtn.textContent;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i data-lucide="loader-2" class="animate-spin" style="width:14px;height:14px;"></i> Saving...';
+    lucide.createIcons();
+
     const date = document.getElementById('attendanceDate').value;
-    const changesToApply = Object.keys(attendanceChanges).map(studentId => ({
+    const changes = Object.keys(attendanceChanges).map(studentId => ({
         studentId: Number(studentId),
         status: attendanceChanges[studentId]
     }));
 
     try {
-        let successCount = 0;
-        for (const change of changesToApply) {
-            const response = await apiCall('/teacher/mark-manual', 'POST', {
-                classId: currentClassId,
-                studentId: change.studentId,
-                status: change.status,
-                date: date
+        const response = await apiCall('/teacher/mark-bulk-manual', 'POST', {
+            classId: currentClassId,
+            changes: changes,
+            date: date
+        });
+
+        if (response.success) {
+            // Cinematic success feedback
+            gsap.to('.stat-card', { 
+                scale: 1.05, 
+                duration: 0.3, 
+                stagger: 0.1, 
+                yoyo: true, 
+                repeat: 1, 
+                ease: "back.out(2)" 
             });
-
-            if (response.success) {
-                successCount++;
-            }
+            
+            isAttendanceEditMode = false;
+            attendanceChanges = {};
+            updateEditModeButtons();
+            await loadAttendance();
         }
-
-        alert(`Attendance updated successfully! ${successCount}/${changesToApply.length} records saved.`);
-
-        // Reset edit mode and reload
-        isAttendanceEditMode = false;
-        attendanceChanges = {};
-        updateEditModeButtons();
-        await loadAttendance();
-
     } catch (error) {
-        alert(`Error saving attendance: ${error.message}`);
+        alert(`Error saving: ${error.message}`);
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = origText;
     }
 }
 
@@ -343,10 +405,16 @@ function closeAttendanceModal() {
 
 async function exportAttendance() {
     try {
+        if (!currentClassId || Number.isNaN(Number(currentClassId))) {
+            alert('Please select a valid class first.');
+            return;
+        }
+
         const token = getAuthToken();
         const date = document.getElementById('attendanceDate').value;
+        const classId = Number(currentClassId);
 
-        const response = await fetch(`${API_BASE_URL}/teacher/export/${currentClassId}?startDate=${date}&endDate=${date}`, {
+        const response = await fetch(`${API_BASE_URL}/teacher/export/${classId}?startDate=${date}&endDate=${date}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

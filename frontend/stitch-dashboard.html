@@ -13,7 +13,7 @@
     <div class="ep-shell">
         <!-- NAV -->
         <nav class="ep-nav">
-            <a href="teacher.html" class="ep-brand">
+            <a href="stitch-dashboard.html" class="ep-brand">
                 <div class="ep-brand-mark">
                     <i data-lucide="graduation-cap" style="width:20px;height:20px;"></i>
                 </div>
@@ -21,14 +21,17 @@
             </a>
 
             <div class="ep-nav-links">
-                <a href="teacher.html" class="ep-navlink active" id="navHome">
+                <a href="stitch-dashboard.html" class="ep-navlink active">
                     <i data-lucide="layout-dashboard" style="width:15px;height:15px;"></i> Dashboard
                 </a>
                 <a href="courses.html" class="ep-navlink">
                     <i data-lucide="book-open" style="width:15px;height:15px;"></i> Courses
                 </a>
                 <a href="#" class="ep-navlink" id="navAnalytics">
-                    <i data-lucide="bar-chart-3" style="width:15px;height:15px;"></i> Attendance Logs
+                    <i data-lucide="bar-chart-3" style="width:15px;height:15px;"></i> Analytics
+                </a>
+                <a href="student.html" class="ep-navlink">
+                    <i data-lucide="users" style="width:15px;height:15px;"></i> Students
                 </a>
             </div>
 
@@ -48,7 +51,8 @@
         <div class="ep-content">
             <!-- SIDEBAR -->
             <aside class="ep-sidebar">
-                <a href="teacher.html" class="ep-sidebar-item active">
+                <div class="ep-sidebar-section-title">Menu</div>
+                <a href="stitch-dashboard.html" class="ep-sidebar-item active">
                     <i data-lucide="home" style="width:16px;height:16px;"></i> Home
                 </a>
                 <a href="courses.html" class="ep-sidebar-item">
@@ -57,6 +61,9 @@
                 <button class="ep-sidebar-item" id="sideAnalytics">
                     <i data-lucide="bar-chart-3" style="width:16px;height:16px;"></i> Attendance Logs
                 </button>
+                <a href="student.html" class="ep-sidebar-item">
+                    <i data-lucide="users" style="width:16px;height:16px;"></i> Student View
+                </a>
 
                 <div class="ep-sidebar-spacer"></div>
 
@@ -143,7 +150,13 @@
 
                         <!-- Logs Tab -->
                         <div id="paneLogs" style="display:none;">
-                            <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;">
+                            <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+                                <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:2px 12px;min-width:200px;">
+                                    <i data-lucide="layers" style="width:14px;height:14px;color:var(--muted);"></i>
+                                    <select id="logsClassSelector" class="ep-input" style="border:none;background:transparent;padding:8px 4px;font-size:0.85rem;width:100%;outline:none;" onchange="window.currentClassId=Number(this.value);loadAttendance()">
+                                        <option value="">Select Class...</option>
+                                    </select>
+                                </div>
                                 <input type="date" id="attendanceDate" class="ep-input" style="max-width:180px;">
                                 <button onclick="loadAttendance()" class="ep-btn ep-btn-ghost ep-btn-sm">Load</button>
                                 <button onclick="toggleEditMode()" id="editModeBtn" class="ep-btn ep-btn-ghost ep-btn-sm" style="display:none;">Edit</button>
@@ -154,7 +167,7 @@
                                 </button>
                             </div>
                             <div id="attendanceStats" class="stats-grid" style="margin-bottom:20px;"></div>
-                            <div id="attendanceList" class="ep-table-wrap ep-table-mobile-cards">
+                            <div id="attendanceList" class="ep-table-wrap">
                                 <div class="loading">Select a date above to load records.</div>
                             </div>
                         </div>
@@ -266,22 +279,11 @@
         function switchDashTab(tab) {
             document.getElementById('paneClasses').style.display = tab === 'classes' ? 'block' : 'none';
             document.getElementById('paneLogs').style.display   = tab === 'logs'    ? 'block' : 'none';
-            
             document.getElementById('tabClasses').classList.toggle('active', tab === 'classes');
             document.getElementById('tabLogs').classList.toggle('active', tab === 'logs');
-            
-            // Update sidebar active state
-            document.querySelectorAll('.ep-sidebar-item').forEach(el => el.classList.remove('active'));
-            if (tab === 'classes') {
-                document.querySelector('.ep-sidebar-item[href="teacher.html"]')?.classList.add('active');
-            } else if (tab === 'logs') {
-                document.getElementById('sideAnalytics')?.classList.add('active');
-            }
-
             if (tab === 'logs') {
                 const today = new Date().toISOString().split('T')[0];
-                const dateEl = document.getElementById('attendanceDate');
-                if (dateEl) dateEl.value = today;
+                document.getElementById('attendanceDate').value = today;
                 if (typeof loadAttendance === 'function') loadAttendance();
             }
         }
@@ -306,6 +308,79 @@
                     if (el) el.textContent = user.full_name.charAt(0).toUpperCase();
                 });
             }
+        });
+
+        // -- Load class count stats after loadClasses runs --
+        const _origDisplayClasses = window.displayClasses;
+        if (typeof _origDisplayClasses === 'function') {
+            window.displayClasses = function(classes) {
+                _origDisplayClasses(classes);
+                const c = document.getElementById('totalClassesCount');
+                if (c) c.textContent = classes.length;
+                const s = document.getElementById('totalStudentsCount');
+                if (s) {
+                    const total = classes.reduce((a,b)=> a + (Number(b.enrolled_students)||0), 0);
+                    s.textContent = total;
+                }
+                lucide.createIcons();
+            };
+        }
+
+        // -- Override teacher.js displayClasses to use premium row style --
+        window.displayClasses = function(classes) {
+            const container = document.getElementById('classesList');
+            window.__classMap = new Map(classes.map(c => [Number(c.id), c]));
+            if (!classes.length) {
+                container.innerHTML = '<p class="loading">No classes found. Add courses first.</p>';
+                return;
+            }
+            window.currentClassId = Number(classes[0].id);
+
+            const c = document.getElementById('totalClassesCount');
+            if (c) c.textContent = classes.length;
+            const s = document.getElementById('totalStudentsCount');
+            if (s) {
+                const total = classes.reduce((a,b)=> a + (Number(b.enrolled_students)||0), 0);
+                s.textContent = total;
+            }
+
+            // Update dropdown in Logs tab
+            const selector = document.getElementById('logsClassSelector');
+            if (selector) {
+                selector.innerHTML = '<option value="">Select Class...</option>' + 
+                    classes.map(cls => `<option value="${cls.id}">${cls.class_name}</option>`).join('');
+                if (window.currentClassId) selector.value = window.currentClassId;
+                else selector.value = classes[0].id;
+            }
+
+            container.innerHTML = classes.map(cls => `
+                <div class="ep-class-row">
+                    <div class="ep-class-badge" style="background:${palette[cls.id % palette.length] || 'var(--accent)'};">
+                        <i data-lucide="layers" style="width:18px;height:18px;color:#fff;"></i>
+                    </div>
+                    <div class="ep-class-info">
+                        <div class="ep-class-name">${cls.class_name}</div>
+                        <div class="ep-class-meta">${cls.schedule || 'Schedule TBA'} · ${cls.room_number || 'Room TBA'} · ${cls.enrolled_students || 0} students</div>
+                    </div>
+                    <div class="ep-class-actions">
+                        <button class="ep-btn ep-btn-primary ep-btn-sm" onclick="generateQR(${cls.id})">
+                            <i data-lucide="qr-code" style="width:13px;height:13px;"></i> QR
+                        </button>
+                        <button class="ep-btn ep-btn-ghost ep-btn-sm" onclick="window.currentClassId=${cls.id};if(document.getElementById('logsClassSelector'))document.getElementById('logsClassSelector').value=${cls.id};switchDashTab('logs');">
+                            <i data-lucide="file-text" style="width:13px;height:13px;"></i> Logs
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+
+            gsap.from('.ep-class-row', { y:16, opacity:0, duration:0.5, stagger:0.08, ease:'power2.out' });
+        };
+
+        // Patch classMap for teacher.js
+        Object.defineProperty(window, 'classMap', {
+            get: () => window.__classMap || new Map(),
+            set: (v) => { window.__classMap = v; }
         });
     </script>
 </body>

@@ -1,4 +1,4 @@
-﻿if (!requireAuth('student')) {
+if (!requireAuth('student')) {
     // Redirect handled in requireAuth
 }
 
@@ -30,40 +30,69 @@ function displayStatistics(stats) {
     const container = document.getElementById('statisticsList');
 
     if (!stats.length) {
-        container.innerHTML = '<p class="loading">You are not enrolled in any classes.</p>';
+        if (container) {
+            container.innerHTML = '<p class="loading">You are not enrolled in any classes.</p>';
+        }
+        updateSummaryStats([]);
         return;
     }
 
-    container.innerHTML = stats.map((stat) => {
-        const percentage = parseFloat(stat.attendance_percentage) || 0;
-        let statusColor = 'var(--success)';
+    if (container) {
+        container.innerHTML = stats.map((stat) => {
+            const percentage = parseFloat(stat.attendance_percentage) || 0;
+            let statusColor = 'var(--success)';
 
-        if (percentage < 75) {
-            statusColor = 'var(--danger)';
-        } else if (percentage < 85) {
-            statusColor = 'var(--warning)';
-        }
+            if (percentage < 75) {
+                statusColor = 'var(--danger)';
+            } else if (percentage < 85) {
+                statusColor = 'var(--warning)';
+            }
 
-        return `
-            <article class="stat-card-detailed">
-                <div class="class-header">
-                    <div>
-                        <h4>${escapeHtml(stat.class_name)}</h4>
-                        <span class="class-code">${escapeHtml(stat.class_code)}</span>
+            return `
+                <article class="stat-card-detailed">
+                    <div class="class-header">
+                        <div>
+                            <h4>${escapeHtml(stat.class_name)}</h4>
+                            <span class="class-code">${escapeHtml(stat.class_code)}</span>
+                        </div>
                     </div>
-                </div>
-                <p class="muted-text">${escapeHtml(stat.subject)}</p>
+                    <p class="muted-text">${escapeHtml(stat.subject)}</p>
 
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${percentage}%; background: ${statusColor};">
-                        ${percentage}%
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentage}%; background: ${statusColor};">
+                            ${percentage}%
+                        </div>
                     </div>
-                </div>
 
-                <p class="muted-text">${Number(stat.present_count) || 0} / ${Number(stat.total_sessions) || 0} sessions attended</p>
-            </article>
-        `;
-    }).join('');
+                    <p class="muted-text">${Number(stat.present_count) || 0} / ${Number(stat.total_sessions) || 0} sessions attended</p>
+                </article>
+            `;
+        }).join('');
+    }
+
+    updateSummaryStats(stats);
+}
+
+function updateSummaryStats(stats) {
+    const totalClassesEl = document.getElementById('totalClasses');
+    const presentCountEl = document.getElementById('presentCount');
+    const absentCountEl = document.getElementById('absentCount');
+    const attendancePercentEl = document.getElementById('attendancePercent');
+
+    if (!totalClassesEl || !presentCountEl || !absentCountEl || !attendancePercentEl) {
+        return;
+    }
+
+    const totalClasses = stats.length;
+    const totalPresent = stats.reduce((sum, stat) => sum + (Number(stat.present_count) || 0), 0);
+    const totalSessions = stats.reduce((sum, stat) => sum + (Number(stat.total_sessions) || 0), 0);
+    const totalAbsent = Math.max(totalSessions - totalPresent, 0);
+    const percentage = totalSessions > 0 ? ((totalPresent / totalSessions) * 100).toFixed(1) : 0;
+
+    totalClassesEl.textContent = totalClasses;
+    presentCountEl.textContent = totalPresent;
+    absentCountEl.textContent = totalAbsent;
+    attendancePercentEl.textContent = `${percentage}%`;
 }
 
 async function loadRecentAttendance() {

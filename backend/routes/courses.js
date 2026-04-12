@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
-const { authenticateToken, isTeacher } = require('../middleware/auth');
+const { authenticateToken, isTeacher, isStudent } = require('../middleware/auth');
 
 // Get all courses (for browse/enroll)
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const result = await db.query(`
             SELECT 
@@ -52,7 +52,7 @@ router.get('/my-courses', authenticateToken, isTeacher, async (req, res) => {
 });
 
 // Get student's enrolled courses
-router.get('/my-enrollment', authenticateToken, async (req, res) => {
+router.get('/my-enrollment', authenticateToken, isStudent, async (req, res) => {
     try {
         const studentId = req.user.id;
         const result = await db.query(`

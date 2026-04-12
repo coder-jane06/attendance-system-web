@@ -1,186 +1,215 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mark Attendance | Attendance Manager</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Verify | EduPro Premium</title>
+    <link rel="stylesheet" href="css/stitch-screens.css">
     <style>
-        .success-content {
+        .result-body { display:grid; place-items:center; min-height:100vh; padding:20px; }
+        .result-card {
+            width: 100%; max-width: 480px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(220,212,240,0.6);
+            border-radius: 40px;
+            padding: 60px 40px;
             text-align: center;
+            box-shadow: 0 40px 100px rgba(80,60,120,0.12);
         }
-
-        .success-content h1 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
+        .status-orb {
+            width: 80px; height: 80px;
+            border-radius: 28px;
+            margin: 0 auto 28px;
+            display: grid; place-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
         }
-
-        .success-content p {
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
+        .status-success { background: linear-gradient(135deg, #4ade80, #22c55e); color: #fff; }
+        .status-error { background: linear-gradient(135deg, #f87171, #ef4444); color: #fff; }
+        .status-absent { color: #b91c1c; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); border-radius: 999px; padding: 4px 12px; font-size: 0.8rem; font-weight: 700; }
+        
+        /* Success Reveal */
+        .success-checkmark {
+            width: 80px; height: 80px;
+            margin: 0 auto 24px;
+            display: none;
         }
-
-        .class-summary {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 1.5rem;
-            border-radius: 16px;
-            margin: 2rem 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        .check-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #22c55e;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
         }
-
-        .class-summary strong {
-            font-size: 1.25rem;
-            color: var(--primary);
+        .check-mark {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
         }
-
-        .class-summary span {
-            color: var(--text-secondary);
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+        .info-box {
+            background: rgba(220,212,240,0.2);
+            border: 1px solid rgba(220,212,240,0.5);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 32px 0;
+            text-align: left;
         }
-
-        .class-summary small {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .success-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .error-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
+        .info-box h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; }
+        .info-box p { color: var(--muted); font-size: 0.9rem; }
     </style>
 </head>
+<body class="result-body">
+    <div class="ep-blob ep-blob-a"></div>
+    <div class="ep-blob ep-blob-b"></div>
 
-<body class="success-page">
-    <main class="login-shell">
-        <section class="login-card" id="content">
-            <div class="success-content">
-                <p class="loading">Processing attendance...</p>
-            </div>
-        </section>
+    <main class="result-card" id="mainContent">
+        <div class="loading">
+            <i data-lucide="loader-2" class="animate-spin" style="width: 40px; height: 40px; margin: 0 auto 16px; color: var(--accent);"></i>
+            <h2 style="font-weight:800;">Verifying Session</h2>
+            <p style="color:var(--muted); font-size:0.9rem;">Connecting to EduPro Secure Core...</p>
+        </div>
     </main>
 
-    <script src="/js/config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
+    <script src="js/config.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const token = params.get('token');
         const classId = params.get('classId');
 
-        function escapeHtml(unsafe) {
-            return (unsafe || '').toString()
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function getAuthToken() {
-            return localStorage.getItem('token');
-        }
-
-        function showError(message) {
-            const content = document.getElementById('content');
-            content.innerHTML = `
-                <div class="success-content">
-                    <div class="error-icon">⚠️</div>
-                    <h1>Unable to mark attendance</h1>
-                    <div class="error-message" style="display:inline-block; text-align:left;">${escapeHtml(message)}</div>
-                    <div class="btn-row">
-                        <a href="/login.html" class="btn btn-primary">Go to Login</a>
-                        <a href="/student.html" class="btn btn-secondary">Open Dashboard</a>
-                    </div>
-                </div>
-            `;
-        }
-
-        function showSuccess(classInfo) {
-            const content = document.getElementById('content');
-            const now = new Date().toLocaleTimeString();
-
-            content.innerHTML = `
-                <div class="success-content">
-                    <div class="success-icon">✅</div>
-                    <h1>Attendance marked</h1>
-                    <p>Your attendance has been recorded successfully.</p>
-                    <div class="class-summary">
-                        <strong>${escapeHtml(classInfo.class_name)}</strong>
-                        <span>${escapeHtml(classInfo.subject)}</span>
-                        <small>Marked at ${escapeHtml(now)}</small>
-                    </div>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Redirecting to dashboard in <strong id="timer" style="color: var(--text-primary);">3</strong> seconds.</p>
-                    <div class="btn-row">
-                        <a href="/student.html" class="btn btn-primary">Open Dashboard</a>
-                    </div>
-                </div>
-            `;
-
-            let count = 3;
-            const timer = document.getElementById('timer');
-            const interval = setInterval(() => {
-                count -= 1;
-                timer.textContent = String(count);
-                if (count <= 0) {
-                    clearInterval(interval);
-                    window.location.href = '/student.html';
-                }
-            }, 1000);
-        }
-
-        async function markAttendance() {
+        function dashboardHref() {
             try {
-                if (!token || !classId) {
-                    showError('Invalid QR code data. Please scan a fresh code.');
-                    return;
-                }
-
-                const authToken = getAuthToken();
-                if (!authToken) {
-                    window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
-                    return;
-                }
-
-                const response = await fetch('/api/student/scan-qr', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify({ token, classId })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    showError(data.message || 'Failed to mark attendance.');
-                    return;
-                }
-
-                showSuccess(data.class || { class_name: 'Class', subject: 'Attendance' });
-            } catch (error) {
-                showError(`Error marking attendance: ${error.message}`);
+                const u = getUserData();
+                return u && u.role === 'teacher' ? 'teacher.html' : 'student.html';
+            } catch {
+                return 'student.html';
             }
         }
 
-        markAttendance();
+        function wireDashboardLinks() {
+            const h = dashboardHref();
+            ['backToDashLink', 'skipDashLink'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) el.href = h;
+            });
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function renderResult(success, message, classInfo) {
+            const container = document.getElementById('mainContent');
+            const icon = success ? 'check' : 'x-circle';
+            const title = success ? 'Verified!' : 'Oops!';
+            const sub = success ? 'Your attendance has been recorded.' : 'Verification failed.';
+            const orbClass = success ? 'status-success' : 'status-error';
+
+            container.innerHTML = `
+                ${success ? `
+                    <div class="success-checkmark" style="display:block;">
+                        <svg viewBox="0 0 52 52" style="width:100%; height:100%;">
+                            <circle class="check-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="check-mark" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                ` : `
+                    <div class="status-orb ${orbClass}">
+                        <i data-lucide="${icon}" style="width:40px;height:40px;"></i>
+                    </div>
+                `}
+                
+                <h1 style="font-size:2.2rem; font-weight:800; letter-spacing:-0.04em;">${title}</h1>
+                <p style="color:var(--muted); margin-top:8px;">${sub}</p>
+                
+                <div class="info-box">
+                    <h3>${escapeHtml(classInfo ? classInfo.class_name : (success ? 'Session Recognized' : 'Request Refused'))}</h3>
+                    <p style="font-weight:500; font-size:0.95rem; color:var(--text); margin-top:4px;">${escapeHtml(classInfo ? classInfo.subject : (success ? 'Attendance Registered' : message))}</p>
+                </div>
+
+                ${success ? `
+                    <p style="margin-bottom:24px; font-size:0.85rem; color:var(--muted);">
+                        Redirecting in <strong id="timer" style="color:var(--accent);">3</strong>s
+                    </p>
+                    <a href="#" id="backToDashLink" class="ep-btn ep-btn-primary" style="width:100%; justify-content:center; padding:12px;">
+                        Back to Dashboard
+                    </a>
+                ` : `
+                    <div style="display:flex; gap:12px; margin-bottom:24px;">
+                        <button onclick="init()" class="ep-btn ep-btn-primary" style="flex:1; justify-content:center;">
+                            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> Retry
+                        </button>
+                        <a href="#" id="skipDashLink" class="ep-btn ep-btn-ghost" style="flex:1; justify-content:center;">
+                            Skip
+                        </a>
+                    </div>
+                    <p style="font-size:0.75rem; color:var(--muted); line-height:1.4;">
+                        Ensure you are scanning the <strong>latest QR</strong> on the teacher's screen. Tokens reset every 5s.
+                    </p>
+                `}
+            `;
+            
+            lucide.createIcons();
+            wireDashboardLinks();
+            gsap.from(".result-card", { scale: 0.95, opacity: 0, duration: 0.4, ease: "back.out(1.7)" });
+
+            if (success) {
+                let count = 3;
+                const interval = setInterval(() => {
+                    count--;
+                    const t = document.getElementById('timer');
+                    if (t) t.textContent = count;
+                    if (count <= 0) {
+                        clearInterval(interval);
+                        window.location.href = dashboardHref();
+                    }
+                }, 1000);
+            }
+        }
+
+        async function init() {
+            if (!token || !classId) {
+                renderResult(false, 'Transaction tokens are missing from the URL.');
+                return;
+            }
+
+            if (!isLoggedIn()) {
+                const currentUrl = window.location.pathname + window.location.search;
+                window.location.href = `login.html?redirect=${encodeURIComponent(currentUrl)}`;
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('mainContent').innerHTML = `
+                <div class="loading">
+                    <i data-lucide="loader-2" class="animate-spin" style="width: 40px; height: 40px; margin: 0 auto 16px; color: var(--accent);"></i>
+                    <h2 style="font-weight:800;">Verifying Session</h2>
+                    <p style="color:var(--muted); font-size:0.9rem;">Connecting to Secure Core...</p>
+                </div>
+            `;
+            lucide.createIcons();
+
+            try {
+                // Using the standardized apiCall helper for security and consistency
+                const data = await apiCall('/student/scan-qr', 'POST', { token, classId });
+                renderResult(data.success, data.message || 'Verification success', data.class);
+            } catch (err) {
+                console.error('Scan Error:', err);
+                renderResult(false, err.message || 'Unable to reach the server. Check your connection.');
+            }
+        }
+
+        init();
+        gsap.from('.ep-blob-a', { x:-60, opacity:0, duration:2 });
+        gsap.from('.ep-blob-b', { x:60, opacity:0, duration:2 });
     </script>
 </body>
-
 </html>

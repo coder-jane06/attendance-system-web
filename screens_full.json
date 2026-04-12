@@ -1,0 +1,406 @@
+{
+  "screens": [
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/1504413491545131503",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uj3q39QTL1UooU9PZFGAtxk5sX33teyMPkIM96QczDddnQWG5rSSYQ4yk_TTyFA8nIAS40bOH6yY0iCRba5LHfyeAcTF3dGyIupwpRStcYm4DmoBRxz0pVf4enhxmvDQ11jHn7e-ZhBpIIWde9hFkttt9EQVNViM8RQQgaVolYkDhTaKd4EORbqZRrSIPUFyxkQZZ9eJqYLjVOAixu6bAn2JA56ki3U_4ZllLafevP0IHApcHIVfCA2p2FhD0RgUaclGHywDEW-Vw"
+      },
+      "id": "1504413491545129230",
+      "width": "1919",
+      "height": "918",
+      "title": "image.png",
+      "name": "projects/1492597545947992561/screens/1504413491545129230",
+      "theme": {},
+      "screenType": "IMAGE",
+      "isCreatedByClient": true,
+      "screenMetadata": {
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/1a709a5efd6d4d8f980b7a42eb802ad1",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugDq10UAuhEojp4Gg-zm61ZyNAaUh7RkZgZXK0-4E2ae6ZAZPFbtAUXg-GwwR4LUkEwkfligOcduEsLRpONPpv4TGIYcFVU-u_5FkgrXQKTcMcKggqfcPIzt-q9aG5Oc7cBat29SYAH73aQjsnbSDU9SgChRWjEJAx05UBf7H6RsF71vgP_GVdz3gph8MbKc0NqjWz-nop6BTLCmE7owhaIHfXOYeR07PwW0uygelOOv6KZQQlkGIdu-N0"
+      },
+      "id": "269f4b9ad1b4421da0fa9defaba3eeec",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Ultra-Sleek Glassmorphic Dashboard",
+      "prompt": "Title: Electric Blue & Indigo Glassmorphic Dashboard\nContext: Color scheme swap from pink to a vibrant deep purple, electric blue, and teal palette while maintaining the sleek glassmorphic EdTech dashboard layout.\nEdit request: Redesign the UI of the EDU PRO dashboard with a total color-scheme swap. Replace all pink elements with electric blue and teal accents. All buttons (Resume, View Details) should now be electric blue. Progress rings and the 'Weekly Activity' chart should use a teal-to-blue gradient. The background blurs should be transformed into deep indigo and teal glows. The typography and layout remain identical to the original, preserving the premium glassmorphic feel but with a cooler, high-contrast color palette. Variant 2 of 2.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/269f4b9ad1b4421da0fa9defaba3eeec",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/b07912f39cff49b688e96cdfddfb8e00",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujCnEHdx1MGmXlBbQIwLi_nwnHqqcDIRysWRYSJ6ZLVay9dsWoBT00gov8laO2coUlp89dXvP79zXmRe4-ugqgGLdhtCv_5vjeRdNY2GphPKf14Bzb4-tTzMnPsYufbwPoPNuykt2N_xirUCOxqZ6UYKcsVkrSiYeTHYJVbisVFCstzNEpn9v53GPZoQiZAICEKaMRqEG_nM0D99nyWnS1fnBoJ53vxOSiuV8kURUG1D2Zym5lj5Fv2miQ"
+      },
+      "id": "c41dfdf62ba541c69dfcc38c83d8c72d",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Ultra-Sleek Glassmorphic Dashboard",
+      "prompt": "Title: Refined Premium EdTech Dashboard\nContext: Refining the glassmorphism dashboard to blend more seamlessly with the reference website's structured, premium layout for an EdTech context.\nEdit request: Redesign the dashboard to blend the previous glassmorphism aesthetic with the structure of the reference website. The layout should be cleaner and more organized for an EdTech app. Use a multi-column grid: a slim left sidebar for navigation, a main central area with a large 'Welcome back' hero section, and a right sidebar for smaller widgets like 'Weekly Activity'. The background should be a softer, more subtle pastel gradient. UI elements like course cards and assignment lists should have frosted-glass effects but with more defined borders and clear, high-end typography to ensure readability. Incorporate circular progress rings and cleaner line charts from the reference. The overall feel should be super premium, professional, and balanced between futuristic and functional.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/c41dfdf62ba541c69dfcc38c83d8c72d",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/1504413491545131053",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugyk1Z0N9WPg8mpZCIQmEd8SMxkeGtXlj5C114v_fvwc9t6wWO8-4swA7uqnk8jhZL3mNz1UvIDsF9-5z5yyzpsY9iGUE6mRsquE77hx1wLCaFcT-crNDr5SOkk3dUQMVd5M_rSLTm8x6ZiFq_xILOZSmwGUioTihLZbaq1muLLgTRvu9k7tncrd980b_LidbjYRI5k_f_F_ucDMpGkRuQOfYptavtqvCvFyKBINuFRjh2cB0ACjBEsEtaKAJKgvZbOjjbbLX3SgA"
+      },
+      "id": "1504413491545132876",
+      "width": "1919",
+      "height": "922",
+      "title": "image.png",
+      "name": "projects/1492597545947992561/screens/1504413491545132876",
+      "theme": {},
+      "screenType": "IMAGE",
+      "isCreatedByClient": true,
+      "screenMetadata": {
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/4a9d8ea452924c55bf80035ea3672008",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujqw-6LmQGMXnomUDtOpuLLpuROknl6sQqUFWzscDyL21A6E2ZBh9V-rHUrHkVaH4MdrMosADgggNXphe1Wv9HLfwfmsAwi5giGcBuFN63MC_H3bVVdyhne-YcLSxpSxAGBecKqgi-WAIWXounwBuJYc-9ri41TXMDWCaTjFrYg37p1_Ys0yCJ8pBDXBrxRJAp6ViBpxnH3qkt1K6HsSYw7mHmWrnLYKF9rgWlKm0OXgcTFVrQ_NVHeO4s"
+      },
+      "id": "0ee55ea06a124db188be6d3198b5cbe8",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Ultra-Sleek Glassmorphic Dashboard",
+      "prompt": "Title: Refined Sleek White & Pink EdTech Dashboard\nContext: Modern edtech dashboard with a refined color palette of sleek white and pink, blending glassmorphism with solid elements for a premium feel.\nEdit request: Redesign the dashboard using a more sophisticated and controlled color palette: primarily sleek white, soft grays, and accents of a premium 'EdTech pink'. Replace the multi-colored background with a much more subtle, light-colored gradient or a clean off-white background with very soft pink glowing orbs. The UI elements should now mix glassmorphism with solid white cards for a more grounded 'app' feel, similar to the reference. Use solid white backgrounds for the main sidebar and key content areas to improve readability, while keeping glassmorphic effects for highlights or secondary widgets like 'Weekly Activity'. The typography should be sharp and professional. The circular progress rings and graphs should use the pink accent color. Ensure the overall aesthetic is clean, professional, and high-end.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/0ee55ea06a124db188be6d3198b5cbe8",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/10449396419263833826",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ui-jSfy_UWXeD4_t481qa1mXvT5cYC3xd9jOsS8fnSLn4lf0IrvT1x91yhwFhlgrxRa4y8qFy6Kf-fw7eGtpe7z9-RNNYiT-l6C03tnXMKV_xwo0omr-Qo6cMN8lCfXEkSjEzcnJPRDCYHMK51F48aB0v3c5WyVxUl_rL3Pr0WHdG2P9NSKQbxIcCgcu-f8CBPxUdw9tkb0lp287bI3DCUPxmZQb21Syj8xzv_80ZJ71HWVLJ54Y90c2mkG5Q_CVS3ImECpto29ww"
+      },
+      "id": "10449396419263835455",
+      "width": "706",
+      "height": "399",
+      "title": "image.png",
+      "name": "projects/1492597545947992561/screens/10449396419263835455",
+      "theme": {},
+      "screenType": "IMAGE",
+      "isCreatedByClient": true,
+      "screenMetadata": {
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/9f1618eaac8f4214b1cd2f99ece33309",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugp4CGC0emI-zhDXZohPKl4cR7jzV_1qaKjW4VH6pLrV_gsLoZIEhZrpABmPXl0KtEsMrSogY_G-_6Qr5jv95GwEHKUgc3t8UGZapY6Ko2k0IImyUdPwKBJli6CGCz2B6Oz83xH6PNNM533engVP1UQd1heBei1t5yA_qdpxgutPxlFeJq9Yf8g1IYXyedyH3Z8mFsruK3SItt_8ZRZoUsx1uaMI86jMO8g0G0VjNHUrPXP3UTI6tDZRtE"
+      },
+      "id": "5523d860cea04a46853570dcf96e8620",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Ultra-Sleek Glassmorphic Dashboard",
+      "prompt": "Title: Purple & Teal Glassmorphic Dashboard\nContext: Color scheme swap from pink to a vibrant deep purple, electric blue, and teal palette while maintaining the sleek glassmorphic EdTech dashboard layout.\nEdit request: Redesign the UI of the EDU PRO dashboard with a total color-scheme swap. Replace all magenta and pink accents with a vibrant palette of deep purples, electric blues, and teal. Keep the exact layout and text from the original design ('Welcome back, Anya', course names, etc.). Change all progress rings, buttons, and graph lines from pink to gradients of purple and cyan. Replace the pink background blurs with soft, diffused glows of royal purple and deep indigo. Maintain the high-end glassmorphic effect, frosted panels, and dark charcoal typography. Variant 1 of 2.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/5523d860cea04a46853570dcf96e8620",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/1504413491545131953",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugeZ-jvCswourXeC73SEMYIeD3KcyCI2tKAI2MjfuozPY7XQsRtB1X95rSjlxMsAfinVV7_M8TktNFPndDr9NBCzO86xVTYgLslYnsHRBvymdXe-jMaztbDwhU8SBWgMDyM2DzM6gHnSfIdMm6IO4u0_Z_GoPcvnniavRg8XdkIaY-ADgmiH4U2XAFsd8Ib641UmjXnK0CdhqExybG3Gbqi6uXXaldxXOqDd174YFE_6gg_GWcp6zbu9YUEYWGzB2XiEiCEjEFiUw"
+      },
+      "id": "1504413491545129680",
+      "width": "1919",
+      "height": "862",
+      "title": "image.png",
+      "name": "projects/1492597545947992561/screens/1504413491545129680",
+      "theme": {},
+      "screenType": "IMAGE",
+      "isCreatedByClient": true,
+      "screenMetadata": {
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/f9221e661b7441e48271b9f819676c83",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujWr4VLsY0gRjfbafBl0dhVAQVk74LtZK7O4nCod75rWmITUFv_LO-Xvhm5CoY6TMOaMDc-4M2DPadgVQGCnvK9YVGoo_S0J3pFIy1q1Q-2ygW-QT_DipM-tgT2ewcb3sNtCYXSIgHtBdlUHD660A1WbvF4MQKFWo1MZAcGU9SeMAQGtW8yLlx25jKdyJN2hRjaxCbrP7NCj7lcekmPyWYZ51I9V9abjFhmczgaUjb4Kp3cY2tGe6fVk8E"
+      },
+      "id": "c3f129ad1ae140e390d9d784b803f017",
+      "generatedBy": "image_space_design_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Ultra-Sleek Glassmorphic Dashboard",
+      "prompt": "Title: Ultra-Sleek Glassmorphic Dashboard\nContext: Super premium and sleek modern edtech platform with a glassmorphism aesthetic.\nDescription of the screen: A super premium, ultra-modern EdTech landing page with a clean, high-end aesthetic. The design features a heavy glassmorphism style with frosted-glass containers floating over a soft, multi-colored pastel gradient background (soft purples, teals, and corals). The interface includes a high-tech dashboard layout with a minimalist side navigation, a 'Welcome back' header using elegant sans-serif typography, and interactive cards for 'Current Courses' and 'Assignments'. Use thin lines, subtle glows, and vibrant accent colors for progress bars and CTA buttons. Variant 1 of 2.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/c3f129ad1ae140e390d9d784b803f017",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/1504413491545130603",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uiwkKSizCuh_ev9K3Aq9DGQ4QIapHynElx1wFaDH5IHfoU0u0P_WpFtupbJjL3ZbQT8mzHaJACM5YLfw9YmbTT1CORSGq1suGW52K_7xNFA-1JYIOJN8YcZrKWwOnTaAj6zMpFOM5ltGZVuQ_gMv9nFvYyXP6IqL-097QT4kFNxB4LAFLKOOtC9n6oawzXrJs7lEjDmtU9jL9XGaraiX9XbmaMljphner4GYJhdTbMhpSkRqcGINNIqXDOmIMwFKhRTx8FDACMChg"
+      },
+      "id": "1504413491545132426",
+      "width": "1909",
+      "height": "924",
+      "title": "image.png",
+      "name": "projects/1492597545947992561/screens/1504413491545132426",
+      "theme": {},
+      "screenType": "IMAGE",
+      "isCreatedByClient": true,
+      "screenMetadata": {
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/15438590541535018151",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugbf1rYuqJnU0VmohUctWSO3O7763Frq9KsvVM0F_2P7nDw0yhGSRUkpKY8Mso35liWxFYv-sfBivmO7m1efE9fi_GZu5VgqVqhZByQGJF-tSyPd7Pz_CBQTVS8elc5tGts5CxAE3kT2g8oAwcBLkM-9zY32Jo-LX9Px0JYfx8O6dHwxT709nV-KdD8dGcwGAJRDPXbHvuPBl_2vHNUZ_-8vGzAjh2qBGSf7dqIt84FBrbV5wm-kNRP7-BoJiXCE8TGOZo9LrGfQA"
+      },
+      "id": "15438590541535015318",
+      "width": "1457",
+      "height": "904",
+      "title": "image.png",
+      "name": "projects/1492597545947992561/screens/15438590541535015318",
+      "theme": {},
+      "screenType": "IMAGE",
+      "isCreatedByClient": true,
+      "screenMetadata": {
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/970ee62daf0a4ea6a811cc7e97914243",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uiye2XDt1-vioUDbeLp3Y-sefHQpNSGydMtMxBWSqyhvwJ0tWhoDpZ9ywBrFDpbXlNEPzknSzzjOSopNmqdMz5V6nsXMNEZQeCifndMRDa4q9rB2sdbCzLB_sFouZ8UtebMuBBF7tE69LkNfJaLv-2s5mhjMdSdey2tYAbrSwUiY4mpR028ceSlCEDvb193semLk4rvJR23NI7VCe3WcnH8K6KCVpl5TcYCZGd3jPy_snHmQAm5Bejdy4Y"
+      },
+      "id": "5dc2ea9deb6b472d845c69a74578adb7",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Ultra-Sleek Glassmorphic Dashboard",
+      "prompt": "Title: EDU PRO Performance Analytics View\nContext: Ultra-sleek EdTech dashboard blending glassmorphism with structured professional elements.\nDescription of the screen: A detailed student performance and analytics view for 'EDU PRO'. This screen follows the 'sleek white and pink' aesthetic. It features a large, detailed 'Performance by Subject' donut chart with a glowing pink center. Below, a table-like list of 'Current Courses' (Advanced Machine Learning, Data Science Fundamentals) is shown with vibrant pink gradient progress bars and 'Resume' buttons. The right side contains a 'Weekly Activity' widget with a smooth wave graph and an 'Upcoming Assignments' list with circular checkboxes. The layout is spacious, using solid white card containers on a soft, minimalist background with pink ambient lighting. The typography is professional and modern, ensuring high legibility for educational data.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/5dc2ea9deb6b472d845c69a74578adb7",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/51ee755dee194585a797706ebe1ce959",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujWHhsrJTaiq8W26iorNy0eFh7DnFNwPbo-eZKzV0XOOBpLRbgCanf_8yAd2xA44oEWDKZ96fMJte3QrLxIk3sSBrUoEZpUjEMzaPS4t0rJVuN67kAXWO-LWRyr3VHaE7tS5fwFsrWzyN6BuHEUtrWbijQOOCx59ahpHOIaL7jTEWl9E_vRcVZm2beYmTpJ2BMLYksoz61VEVTevrCXa7JJ-qU8En6HDWr61rO_xOlihTw6tDDj6-n-nuM"
+      },
+      "id": "4d41a21f9bcc4e0580cae1b7fc56a01d",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Premium EdTech Landing Dashboard",
+      "prompt": "Title: EDU PRO Course Catalog\nContext: Premium glassmorphism EdTech platform for 'EDU PRO'.\nDescription of the screen: A premium course catalog page for 'EDU PRO' in the same ultra-sleek glassmorphism style as the dashboard. The layout features a left sidebar with filter categories (Science, Math, Arts) and a search bar at the top with a frosted-glass finish. The main content area displays a grid of course cards with high-quality imagery, glass-textured overlays, and pink 'Join' buttons. Each card shows progress bars for courses already started. The background is a soft, airy pastel gradient with subtle pink and purple glows. Typography is clean and professional.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/4d41a21f9bcc4e0580cae1b7fc56a01d",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/89feccf2316b42b6964840ea470fd3b9",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ug9v7MM-MjgpPIVtSJE8xQiXt6UMDCN1f0bGRMNC-fsBdRCWFXcoGudXax7Gy1qnwEnqo14SWUj02-eeDew456gOU1U7lzltFK3pSHXVWYZtvS5KclE4tEAZREsUuOoF8GuP5KcsHeXLtKh5YyJdWLHJ0nn8uph_FwF0tjwVv6apCOmvwLw4EDb-timJ4Doyi_KZlCragzYZQjhXGAL6lu4kbxyAA3PgMmR6GwqZQMjSqtq7OBMMVrOCA"
+      },
+      "id": "fa796f956aa64313aeaee3eefb230f55",
+      "generatedBy": "image_space_design_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Premium Course Library Interface",
+      "prompt": "Title: Premium Course Library Interface\nContext: Modern edtech dashboard for a super premium user experience.\nDescription of the screen: A super premium, sleek, and modern course management screen for an edtech platform. This design focuses on a rich 'Courses' library with high-quality card layouts, progress trackers, and a 'Top Recommended' section with live status indicators. It should maintain the glassmorphism aesthetic from the reference image, using translucent panels over a dreamy gradient background. Include a sophisticated header with search and user profile integration. Variant 3 of 3.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/fa796f956aa64313aeaee3eefb230f55",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/cf2f1c4557bc46a18bcfb4fe300d81e4",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujDl9KTRSolfvCZyWE5U0HTiGo1_SIQz2zvHoZkrVn6ws3qdSREVDIw3Vi8yjH6NuIJibcWlgr5d24SWnozK4j_zlLOTZdQqgbgdrv3TqwkKLlACr_oRjZVTKFvEyxn_coDuHGT7AJHh6MEQjuC-xjVApoWvHPbmZWInOpJr8Fic_59Q5f4at5nUu8ZQFeWCxZeJWvkOA8_k3b7nykc0ZPwQtfCg5wSckOLoMlqa4IhAmF2mzPcjptP2bE"
+      },
+      "id": "3648629f5c7a47ea81f884779c96b4e2",
+      "generatedBy": "image_space_design_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Premium Aesthetic Learning Path",
+      "prompt": "Title: Premium Aesthetic Learning Path\nContext: Super premium and sleek modern edtech platform with a glassmorphism aesthetic.\nDescription of the screen: A sophisticated, premium EdTech interface focusing on immersive learning. This variant uses a more spacious, 'open' layout with large, high-quality imagery inside glass-textured cards. It features a sleek activity feed on the right, a centralized 'Learning Path' visualization with glowing nodes, and an ultra-modern navigation bar that disappears on scroll. The typography is bold and modern, with a focus on white space to create a 'super clean' and airy feel. The background is a very subtle, animated aurora-style gradient. Variant 2 of 2.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/3648629f5c7a47ea81f884779c96b4e2",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/94eb74804d9646dabc407ba4b29e95f0",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uiYy6wmQkz1xzn6X-2lwSK60fkoJ32gfPVj3CCgQMrcP1u-zAuDyuPjw7FJ7K20Pu9_Yl1L1f848MszbOIdj94nN1Z2fV9e2LM9QO1_YkZlfdterYTcOV7ntbIiOJIgDCVyRsB7IZxo_yJPE1NdQcfeMaHOCAQftvRqmJsmLSwvzmLv75XZtaqaeSXs9KXbnnNaTzi6jmVuYTL1fYyBVQSYVKZlY_hg0rOaneaLwHomKanv-Z3VIrY2kTU"
+      },
+      "id": "350946879c734ecd8c30606a28fab09f",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Ultra-Sleek Glassmorphic Dashboard",
+      "prompt": "Title: Premium EDU PRO Dashboard Refinement\nContext: Ultra-sleek EdTech dashboard blending glassmorphism with structured professional elements.\nDescription of the screen: A premium, ultra-sleek EdTech dashboard for 'EDU PRO'. The layout is organized with a clean white left sidebar (like Apex EdTech) and a main dashboard area featuring the refined white and pink theme from previous iterations. The top section greets 'Welcome back, Anya' with a large, elegant heading. Below it, a row of sleek statistic cards displays '1,250 Instructors', '11,250 Active Students', and a 'B+ Average Grade' with pink glowing accents. The central area shows a large, dynamic multi-line graph for 'Activity Overview' and circular progress rings for courses like 'Advanced Machine Learning'. The design uses a mix of solid white cards and subtle frosted-glass overlays. The background is a clean off-white with very soft, out-of-focus pink orbs. Navigation and data visualizations are crisp, using thin lines and high-end typography for a super-premium feel.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/350946879c734ecd8c30606a28fab09f",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/57da6240c590409fb189b6c9bb53ac82",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujbA-zIiZ8TumT2hDJwk-qQpoNRlh1ES8YgHmVsChqobuo9bA4i5x5VUGptH52eshvdO6YnE5UiT4oe4FyggAPftRFaibIkbWn3NedR-QgVjThxHOkRrIP8pWQSWXzNIj6YD9LGSI2A4PPvB3_X-3HgJkN6D9NLvV0tQZPhyQcFrUwkyHHhj82JQX3csKujaZSe62vfr6RXmgq2lf-zCeIww6ZqOfp6etNAai10IhGA9UkSmII3vfHwOg"
+      },
+      "id": "9cc1beda96c0479d9df49de5184c638a",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Premium EdTech Landing Dashboard",
+      "prompt": "Title: Ultra-Premium Glassmorphic EdTech Hub\nContext: Redesigning the EDU PRO dashboard to perfectly blend the structured layout of the reference with an ultra-premium glassmorphism aesthetic.\nEdit request: Redesign the dashboard to achieve a 'perfect fit' glassmorphism aesthetic based on the reference. Use a light, airy background with soft, out-of-focus pastel glows (purples and pinks). The main interface should consist of several distinct glass cards with soft-frosted textures and subtle white borders. The layout must follow the reference: a left sidebar for 'Courses' and 'Upcoming Assignments', a top navigation bar with pill-shaped active states, and a main content area. The main area includes a 'Welcome back' hero section, large stat cards (Instructors, Students, Grade), a wide 'Activity Overview' line chart, and a 'Performance by Subject' donut chart. Use the 'sleek white and pink' color scheme for all interactive elements like progress bars, buttons, and chart lines. The typography should be clean and professional, ensuring the UI feels like a super-modern, premium edtech app.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/9cc1beda96c0479d9df49de5184c638a",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/6653dc25e8ad4238859e2fa38f351488",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uh9ceEet0PdCvJfHo3GLSsNydVBHR6qZ1qTZ85xQByZ_QDSlo_uo7O592REy5o0c6aQpxWGriNPBGqifWn0AJ0EzUdW0_pRCE65Q8bVQTAmV_4IHzzAivap5S6dlq2gDB5pwJ0sz7-FypQPn3cHxOUIEGRTUuwPXRaB9LwGq9_n741ykshm9npeL_y8FVFWHTwBZGMGUVRT6YOmnfF5omXmV1akHx2XdbjJyw7jrJK0EIMyV81qx087OGA"
+      },
+      "id": "cca72531c21e4dae86482f8753dfde66",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Premium EdTech Landing Dashboard",
+      "prompt": "Title: EDU PRO Student Profile & Settings\nContext: Premium glassmorphism EdTech platform for 'EDU PRO'.\nDescription of the screen: A sleek student profile and settings page for 'EDU PRO'. The layout includes a central glass panel with a large profile picture, student bio, and 'Achievement Badges' displayed as glowing glass icons. Below this are tabs for 'Personal Info', 'Billing', and 'Security', each designed with a clean, minimalist aesthetic. Pink accents are used for primary buttons and toggle switches. The background maintains the signature soft pastel gradient with glassmorphism overlays for a consistent premium feel across the site.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/cca72531c21e4dae86482f8753dfde66",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/4fae970a92fc4d89ba1d472a43c72390",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uiYaLhzWEXNjs-JIbvBXnPWSgIDL8ul7pFmx31UBo3un_MLofm4SLEy8siM4D7blXhyNB9b4eJ8At-3L3kBfqCQuURC7KnzEC-KqZcjLvbLPO3qZO_moJj1J7wnfa0f7og_nbWtR6J1hh90TE5OWmxsGDKf7Wj_33Aa24qv5w_fskbveD3FyfenPDksnm7huxs5wSpbnkr2abvwcN3rD0-naQqrQqskgYDIHLBYFLhtjKVlvVNWnfSLwKE"
+      },
+      "id": "d1ca8ea635b1474f9254dfe1d1f96947",
+      "generatedBy": "image_space_design_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Advanced Student Analytics View",
+      "prompt": "Title: Advanced Student Analytics View\nContext: Modern edtech dashboard for a super premium user experience.\nDescription of the screen: A super premium, sleek, and modern student analytics view for an edtech platform. This variant focuses on data-heavy reporting with a glassmorphism theme. It should feature detailed performance metrics, interactive graphs showing student progress over time, and a 'Course Request' interactive module. The color palette should use vibrant accents like lime green and electric blue against a soft, frosted-glass background. The layout should be spacious and organized into card-based components with rounded corners. Variant 2 of 3.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/d1ca8ea635b1474f9254dfe1d1f96947",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/4f7942c022564c798689607bea0566ef",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhRw7OuDrq1OyjAagk6swlfHrNzFrCtBLBUde9oDJB6rN2VDELXy37-6N-hVQN2XYqq_ouIBeUjfxacashNJihFtFRYq9NyrqmtxcD6OwyteH9d9iZLEB5in8M0B4WMfKNVPF7UOVpFSr9ZcTByWVKeVf2Un3e5lSCZ9LidukD12Jg1HyOidhczHLFEhvbYsRmJP1g37L08uwY1dYJUrkMTqbc7xU3GPp5bTYCTIVcvPnvjb9yD5nANCPg"
+      },
+      "id": "d9e8b485e03042dcb17b3d5c9919b48e",
+      "generatedBy": "image_space_design_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Premium EdTech Landing Dashboard",
+      "prompt": "Title: Premium EdTech Landing Dashboard\nContext: Modern edtech dashboard for a super premium user experience.\nDescription of the screen: A super premium, sleek, and modern landing page for an edtech platform. The design should feature a clean glassmorphism aesthetic with a soft pastel gradient background (purples, pinks, and blues) as seen in the reference. Use high-end typography and subtle shadows. The layout should include a prominent 'Welcome' header, a sidebar with course cards and upcoming assignments, and a main content area with interactive data visualizations (line charts and circular progress rings). Navigation should be minimalist with rounded pill-shaped buttons. The overall feel should be airy, sophisticated, and high-tech. Variant 1 of 3.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/d9e8b485e03042dcb17b3d5c9919b48e",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    },
+    {
+      "screenshot": {
+        "name": "projects/1492597545947992561/files/f00dddcc6e9345b29bfba39bac6cb029",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugF5Lu0UnA9BicC2TW77HZuNKA8qpPQEqMNlqf0x3odGuYYqGAYvyBlOgsZSlbXFB7X_435PIuUdrO41jXI06PhjWEOXySP5Od5YWgE1-4my39nB6TBHOCjy-5I7huhLkk7fzK8jdQEHaOyOTDLeKUY_HkDuaoBNFZdDls3lu6dLYypEOdNx-Wu4TKz8z7Svkhrd76czei7A_XLC3_KPL5_Ngcypg0uNO1aZMHrrnyS-kXNnkAfBcCuTkw"
+      },
+      "id": "8b3dd384bfed4bbcb7eda29b6c0db2b0",
+      "generatedBy": "image_space_edit_agent",
+      "width": "1376",
+      "height": "768",
+      "title": "Premium EdTech Landing Dashboard",
+      "prompt": "Title: EDU PRO Immersive Lesson Player\nContext: Premium glassmorphism EdTech platform for 'EDU PRO'.\nDescription of the screen: An immersive lesson player screen for 'EDU PRO' using the ultra-premium glassmorphism theme. The screen features a large video player area with glass-textured controls on the left. On the right, a scrollable panel with frosted-glass texture lists the 'Course Content' with expandable modules. Below the video, there is a section for 'Notes' and 'Discussion' with sleek, minimalist text inputs. The color palette is white, soft gray, and pink accents over a dreamy pastel background. The overall feel is focused and high-end.\nPlatform: web\nForm factor: desktop",
+      "name": "projects/1492597545947992561/screens/8b3dd384bfed4bbcb7eda29b6c0db2b0",
+      "theme": {},
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN",
+      "screenMetadata": {
+        "agentType": "IMAGE_PRO_AGENT",
+        "status": "COMPLETE"
+      }
+    }
+  ]
+}

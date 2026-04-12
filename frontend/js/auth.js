@@ -1,4 +1,4 @@
-﻿const redirectTarget = getSafeRedirect();
+const redirectTarget = getSafeRedirect();
 
 if (isLoggedIn()) {
     const user = getUserData();
@@ -20,6 +20,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const loginBtn = document.getElementById('loginBtn');
     const errorMessage = document.getElementById('errorMessage');
 
+    const loginBtnDefault = loginBtn.textContent;
     loginBtn.disabled = true;
     loginBtn.textContent = 'Signing in...';
     errorMessage.style.display = 'none';
@@ -43,6 +44,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         errorMessage.textContent = error.message || 'Login failed. Please try again.';
         errorMessage.style.display = 'block';
         loginBtn.disabled = false;
-        loginBtn.textContent = 'Sign In';
+        loginBtn.textContent = loginBtnDefault;
     }
 });

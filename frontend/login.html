@@ -1,48 +1,122 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Attendance Manager</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Login | EduPro</title>
+    <link rel="stylesheet" href="css/stitch-screens.css">
+    <style>
+        body { display:grid; place-items:center; min-height:100vh; }
+        .login-wrap {
+            width: 100%; max-width: 460px;
+            position: relative; z-index: 1;
+        }
+        .login-card {
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(28px);
+            border: 1px solid rgba(220,212,240,0.55);
+            border-radius: 36px;
+            padding: 52px 48px 44px;
+            box-shadow: 0 40px 100px rgba(80,60,120,0.14);
+        }
+        .login-logo {
+            width: 52px; height: 52px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #8864e8, #d778bb);
+            display: grid; place-items: center;
+            color: #fff;
+            box-shadow: 0 10px 28px rgba(136,100,232,0.35);
+            margin-bottom: 28px;
+        }
+        .login-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 6px; }
+        .login-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 36px; }
+        .demo-box {
+            margin-top: 28px;
+            padding: 18px 20px;
+            background: rgba(220,212,240,0.18);
+            border: 1px solid rgba(220,212,240,0.5);
+            border-radius: 16px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+        .demo-box strong { color: var(--text); display: block; margin-bottom: 4px; }
+        .err-box { color: #c0392b; font-size: 0.85rem; margin-bottom: 14px; padding: 10px 14px; background: rgba(239,68,68,0.06); border-radius: 10px; border: 1px solid rgba(239,68,68,0.2); display: none; }
+        .login-divider {
+            display: flex; align-items: center; gap: 14px; margin: 22px 0 18px;
+            color: var(--muted); font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: rgba(220,212,240,0.85); }
+        .google-btn-host { display: flex; justify-content: center; min-height: 44px; }
+        .google-btn-host > div { width: 100% !important; max-width: 100%; }
+    </style>
 </head>
+<body>
+    <div class="ep-blob ep-blob-a"></div>
+    <div class="ep-blob ep-blob-b"></div>
 
-<body class="login-page">
-    <main class="login-shell">
-        <section class="login-card">
-            <div class="logo-section">
-                <div class="logo">AM</div>
-                <h1>Attendance Manager</h1>
-                <p class="subtitle">Secure QR Classroom Attendance</p>
+    <div class="login-wrap">
+        <div class="login-card">
+            <div class="login-logo">
+                <i data-lucide="graduation-cap" style="width:26px;height:26px;"></i>
             </div>
+            <h1 class="login-title">Welcome back</h1>
+            <p class="login-sub">EduPro — Premium attendance tracking system</p>
 
-            <form id="loginForm" class="form">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="teacher@university.edu" required>
+            <form id="loginForm">
+                <div class="ep-field">
+                    <label>Email Address</label>
+                    <input type="email" id="email" class="ep-input" placeholder="name@university.edu" required>
                 </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div class="ep-field">
+                    <label>Password</label>
+                    <input type="password" id="password" class="ep-input" placeholder="••••••••" required>
                 </div>
-
-                <div id="errorMessage" class="error-message" style="display:none;"></div>
-
-                <button type="submit" class="btn btn-primary" id="loginBtn">Sign In</button>
+                <div id="errorMessage" class="err-box"></div>
+                <button type="submit" class="ep-btn ep-btn-primary" style="width:100%;justify-content:center;padding:14px;" id="loginBtn">
+                    Sign in to dashboard
+                </button>
             </form>
 
-            <div class="demo-credentials">
-                <p><strong>Demo Accounts</strong></p>
-                <p><small>Teacher: teacher1@university.edu / password123</small></p>
-                <p><small>Student: student1@university.edu / password123</small></p>
+            <div id="googleDivider" class="login-divider" hidden><span>or</span></div>
+            <div id="googleSignInWrap" class="google-btn-host" hidden aria-label="Google sign-in"></div>
+
+            <div class="demo-box">
+                <strong>Demo Credentials</strong>
+                Teacher: teacher1@university.edu / password123<br>
+                Student: student1@university.edu / password123
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
     <script src="js/config.js"></script>
+    <script src="js/google-login.js"></script>
     <script src="js/auth.js"></script>
-</body>
+    <script>
+        // Show errors in styled box
+        const origError = window.showError || null;
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('loginForm');
+            const errBox = document.getElementById('errorMessage');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    errBox.style.display = 'none';
+                });
+            }
+        });
+        // Override showError if auth.js uses it
+        function showLoginError(msg) {
+            const errBox = document.getElementById('errorMessage');
+            errBox.textContent = msg;
+            errBox.style.display = 'block';
+        }
 
+        gsap.from('.login-card', { y:60, opacity:0, duration:1, ease:'expo.out', delay:0.2 });
+        gsap.from('.ep-blob-a', { x:-100, opacity:0, duration:2, ease:'expo.out' });
+        gsap.from('.ep-blob-b', { x:100, opacity:0, duration:2, ease:'expo.out' });
+    </script>
+</body>
 </html>

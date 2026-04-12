@@ -1,14 +1,20 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const { Server } = require('socket.io');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.HTTPS_PORT || 5443;
+
+if (!process.env.JWT_SECRET) {
+    console.error('CRITICAL ERROR: HTTPS Server - JWT_SECRET is not defined!');
+    process.exit(1);
+}
 
 const certDir = path.join(__dirname, 'certs');
 const keyPath = path.join(certDir, 'server.key');
@@ -33,6 +39,11 @@ const io = new Server(server, {
         credentials: true
     }
 });
+
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+}));
 
 app.use(cors({
     origin: process.env.FRONTEND_URL || `https://localhost:${PORT}`,
@@ -77,25 +88,48 @@ io.on('connection', (socket) => {
     });
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-const limiter = rateLimit({
+const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: 'Too many requests from this IP, please try again later.'
+    max: Number(process.env.RATE_LIMIT_AUTH_MAX) || 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many attempts, try again later' }
 });
 
-app.use('/api/', limiter);
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: Number(process.env.RATE_LIMIT_API_MAX) || 600,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many requests, try again later' }
+});
+
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/google', authLimiter);
+
+app.use('/api', (req, res, next) => {
+    if (req.path === '/auth/login' || req.path === '/auth/register' || req.path === '/auth/google') {
+        return next();
+    }
+    apiLimiter(req, res, next);
+});
 
 const authRoutes = require('./routes/auth');
 const teacherRoutes = require('./routes/teacher');
 const studentRoutes = require('./routes/student');
+const coursesRoutes = require('./routes/courses');
+const classesRoutes = require('./routes/classes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/student', studentRoutes);
+app.use('/api/courses', coursesRoutes);
+app.use('/api/classes', classesRoutes);
 
 app.get('/api/health', (req, res) => {
     res.json({
@@ -106,15 +140,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.json({
-        message: 'Attendance Management System API (HTTPS)',
-        version: '1.0.0',
-        endpoints: {
-            auth: '/api/auth',
-            teacher: '/api/teacher',
-            student: '/api/student'
-        }
-    });
+    res.redirect('/login.html');
 });
 
 app.use((req, res) => {

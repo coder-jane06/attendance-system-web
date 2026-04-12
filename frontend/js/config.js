@@ -1,4 +1,8 @@
-﻿const API_BASE_URL = `${window.location.origin}/api`;
+const configuredApiBase = window.__API_BASE_URL || localStorage.getItem('apiBaseUrl');
+const inferredApiBase = (window.location.port === '5000' || window.location.port === '5443')
+    ? `${window.location.origin}/api`
+    : `${window.location.protocol}//${window.location.hostname}:5000/api`;
+const API_BASE_URL = (configuredApiBase || inferredApiBase).replace(/\/$/, '');
 
 function getAuthToken() {
     return localStorage.getItem('authToken');
@@ -59,15 +63,29 @@ async function apiCall(endpoint, method = 'GET', data = null) {
 
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-        const result = await response.json();
+        
+        let result = {};
+        const text = await response.text();
+        
+        if (text) {
+            try {
+                result = JSON.parse(text);
+            } catch (jsonErr) {
+                console.warn('Response was not valid JSON:', text.substring(0, 100));
+                // Fallback for non-JSON error pages (like HTML 404s)
+                result = { success: false, message: response.ok ? 'Invalid response format' : `Server error (${response.status})` };
+            }
+        }
 
         if (!response.ok) {
-            throw new Error(result.message || 'API request failed');
+            throw new Error(result.message || `API request failed with status ${response.status}`);
         }
 
         return result;
     } catch (error) {
-        console.error('API Error:', error);
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            throw new Error('Network error: Unable to reach the server. Please check your connection.');
+        }
         throw error;
     }
 }

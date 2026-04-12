@@ -3,15 +3,35 @@ const router = express.Router();
 const db = require('../config/database');
 const { authenticateToken, isTeacher } = require('../middleware/auth');
 
-// Get all classes for a course (teacher can see their classes)
+// Sections for a course: owning teacher or enrolled student (browse / manage)
 router.get('/course/:courseId', authenticateToken, async (req, res) => {
     try {
         const { courseId } = req.params;
+        const courseResult = await db.query(
+            'SELECT id, teacher_id FROM courses WHERE id = $1',
+            [courseId]
+        );
+
+        if (courseResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        const ownerId = courseResult.rows[0].teacher_id;
+        const role = (req.user.role || '').toLowerCase();
+
+        if (role === 'teacher' && ownerId !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Access denied' });
+        }
+
+        if (role !== 'teacher' && role !== 'student') {
+            return res.status(403).json({ success: false, message: 'Access denied' });
+        }
+
         const result = await db.query(`
             SELECT 
                 cls.id, cls.class_code, cls.class_name, cls.section,
                 cls.schedule, cls.room_number, cls.max_strength,
-                COUNT(DISTINCT ce.id) as enrolled_count
+                COUNT(DISTINCT ce.id)::int as enrolled_count
             FROM classes cls
             LEFT JOIN class_enrollments ce ON cls.id = ce.class_id
             WHERE cls.course_id = $1
@@ -25,10 +45,20 @@ router.get('/course/:courseId', authenticateToken, async (req, res) => {
     }
 });
 
-// Get class details with enrolled students
-router.get('/:classId/students', authenticateToken, async (req, res) => {
+// Roster: class teacher only
+router.get('/:classId/students', authenticateToken, isTeacher, async (req, res) => {
     try {
         const { classId } = req.params;
+
+        const verify = await db.query(
+            'SELECT id FROM classes WHERE id = $1 AND teacher_id = $2',
+            [classId, req.user.id]
+        );
+
+        if (verify.rows.length === 0) {
+            return res.status(403).json({ success: false, message: 'Unauthorized' });
+        }
+
         const result = await db.query(`
             SELECT 
                 u.id, u.full_name, u.email, u.student_id,
